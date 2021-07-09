@@ -2,8 +2,13 @@ build-job:
   stage: build
   image: google/cloud-sdk
   script:
-    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
-    - gcloud config set project $GCP_PROJECT
+    - tVersion=$(node get-version.js)
+    - version=${tVersion:-1.0}
+    - echo $version
+    # - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
+    # - gcloud config set project $GCP_PROJECT
+    # - image=gcr.io/$GOOGLE_CLOUD_PROJECT/$GOOGLE_CLOUD_SERVICE:$version
+
 
 # test-job1:
 #   stage: test
