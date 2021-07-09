@@ -5,7 +5,7 @@ build-job:
     - tVersion=$(./get-version.sh)
     - version=${tVersion:-1.0}
     - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
-    # - gcloud config set project $GCP_PROJECT
+    - gcloud config set project $GCP_PROJECT
     - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
     - gcloud builds submit --tag $image
 
