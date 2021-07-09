@@ -4,10 +4,10 @@ build-job:
   script:
     - tVersion=$(./get-version.sh)
     - version=${tVersion:-1.0}
-    - echo $version
-    # - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
+    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
     # - gcloud config set project $GCP_PROJECT
-    # - image=gcr.io/$GOOGLE_CLOUD_PROJECT/$GOOGLE_CLOUD_SERVICE:$version
+    - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
+    - gcloud builds submit --tag $image
 
 
 # test-job1:
