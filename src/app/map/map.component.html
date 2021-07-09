@@ -1,0 +1,9 @@
+<div class="map-wrapper" *ngIf="apiLoaded | async" #mapWrapper>
+  <google-map [options]="options"
+  width="null" height="null"
+  (boundsChanged)="boundsChangedSubject.next()">
+  </google-map>
+  <div *ngFor="let listing of listings" class="listing" (click)="onListingClick(listing)"
+  [style.top]="getRectTop(listing.listing.address.mapPosition) + 'px'"
+  [style.left]="getRectLeft(listing.listing.address.mapPosition) + 'px'">{{getFullListingPrice(listing)}}</div>
+</div>
