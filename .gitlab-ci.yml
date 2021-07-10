@@ -2,7 +2,6 @@
 
 stages:
   - build
-  - before-deploy
   - deploy
 
 build-job:
@@ -13,18 +12,13 @@ build-job:
     - docker:dind
   before_script:
     - docker info
+    - cat $GCP_SERVICE_KEY | docker login -u _json_key --password-stdin https://gcr.io
   script:
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
-    - docker build . -t $GCP_PROJECT/$GCP_SERVICE:$version
-
-test-job:
-  stage: before-deploy
-  image: docker
-  services:
-    - docker:dind
-  script:
-    - docker images
+    - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
+    - docker build . -t $image
+    - docker push $image
 
 deploy-job:
   stage: deploy
