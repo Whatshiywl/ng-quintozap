@@ -25,9 +25,12 @@ cloud-deploy:
   stage: deploy
   image: google/cloud-sdk
   script:
+    - account=cloud-build-gitlab@bubaxi.iam.gserviceaccount.com
     - gcloud auth activate-service-account --project $GCP_PROJECT --key-file $GCP_SERVICE_KEY
-#    - gcloud config set account cloud-build-gitlab@bubaxi.iam.gserviceaccount.com
+    - gcloud projects add-iam-policy-binding $GCP_PROJECT --member "serviceAccount:$account" --role roles/run.admin
+    - gcloud iam service-accounts add-iam-policy-binding $account --member="serviceAccount:$account" --role="roles/iam.serviceAccountUser" 
+    - gcloud config set account $account
     - gcloud config set project $GCP_PROJECT
-    - gcloud run deploy $GCP_SERVICE --service-account cloud-build-gitlab@bubaxi.iam.gserviceaccount.com --image $image --region $GCP_REGION --platform managed --quiet --allow-unauthenticated --concurrency 5 --labels stage=prod 
+    - gcloud run deploy $GCP_SERVICE --service-account $account --image $image --region $GCP_REGION --platform managed --quiet --allow-unauthenticated --concurrency 5 --labels stage=prod 
   dependencies:
     - docker-build
