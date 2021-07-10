@@ -14,8 +14,8 @@ docker-build:
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
     - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
-#    - docker build . -t $image
-#    - docker push $image
+    - docker build . -t $image
+    - docker push $image
     - echo "image=$image" >> build.env
   artifacts:
     reports:
@@ -27,9 +27,6 @@ cloud-deploy:
   script:
     - account=cloud-build-gitlab@bubaxi.iam.gserviceaccount.com
     - gcloud auth activate-service-account --project $GCP_PROJECT --key-file $GCP_SERVICE_KEY
-#    - gcloud projects add-iam-policy-binding $GCP_PROJECT --member "serviceAccount:$account" --role roles/run.admin
-#    - gcloud iam service-accounts add-iam-policy-binding $account --member="serviceAccount:$account" --role="roles/iam.serviceAccountUser" 
-#    - gcloud config set account $account
     - gcloud config set project $GCP_PROJECT
     - gcloud run deploy $GCP_SERVICE --service-account $account --image $image --region $GCP_REGION --platform managed --quiet --allow-unauthenticated --concurrency 5 --labels stage=prod 
   dependencies:
