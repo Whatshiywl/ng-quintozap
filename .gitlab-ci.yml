@@ -5,9 +5,10 @@ build-job:
   services:
     - docker:dind
   script:
+    - docker info
+    - ls -la
     - tVersion=$(./get-version.sh)
     - version=${tVersion:-1.0}
-    - docker info
 #    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
 #    - gcloud config set project $GCP_PROJECT
 #    - gcloud builds submit . --config=cloudbuild.yml
