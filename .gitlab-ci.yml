@@ -14,8 +14,8 @@ docker-build:
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
     - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
-    - docker build . -t $image
-    - docker push $image
+#    - docker build . -t $image
+#    - docker push $image
     - echo "image=$image" >> build.env
   artifacts:
     reports:
