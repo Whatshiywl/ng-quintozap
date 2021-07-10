@@ -1,7 +1,9 @@
-
+variables:
+  - image: $GCP_PROJECT/$GCP_SERVICE
 
 stages:
   - build
+  - before deploy
   - deploy
 
 build-job:
@@ -15,7 +17,17 @@ build-job:
   script:
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
-    - docker build .
+    - docker build . -t $image:$version
+
+test-job:
+  stage: before-deploy
+  image: docker
+  services:
+    - docker:dind
+  script:
+    - echo $image
+    - echo $version
+    - docker images
 
 deploy-job:
   stage: deploy
