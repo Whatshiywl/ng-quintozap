@@ -33,7 +33,7 @@ deploy-job:
 #    - gcloud run deploy $GCP_SERVICE --image $image
 #    - gcloud builds submit . --config=cloudbuild.yml
   dependencies:
-    - build
+    - build-job
 
 # test-job1:
 #   stage: test
