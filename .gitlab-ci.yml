@@ -6,10 +6,10 @@ build-job:
     - docker:dind
   script:
     - docker info
-    - ls -la
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
-#    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
+    - echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && apt-get update -y && apt-get install google-cloud-sdk -y
+    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
 #    - gcloud config set project $GCP_PROJECT
 #    - gcloud builds submit . --config=cloudbuild.yml
 
