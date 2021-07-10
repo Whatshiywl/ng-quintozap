@@ -1,10 +1,4 @@
-image: docker
 
-services:
- - docker:dind
-
-before_script:
-  - docker info
 
 stages:
   - build
@@ -13,11 +7,12 @@ stages:
 build-job:
   stage: build
 #  image: google/cloud-sdk
-#  image: docker
-#  services:
-#    - docker:dind
-  script:
+  image: docker
+  services:
+    - docker:dind
+  before_script:
     - docker info
+  script:
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
     - docker build .
