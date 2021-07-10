@@ -2,7 +2,7 @@
 
 stages:
   - build
-  - before deploy
+  - before-deploy
   - deploy
 
 build-job:
