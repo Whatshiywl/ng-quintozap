@@ -2,7 +2,7 @@ stages:
   - build
   - deploy
 
-build-job:
+docker-build:
   stage: build
   image: docker
   services:
@@ -14,22 +14,19 @@ build-job:
     - tVersion=$(sh ./get-version.sh)
     - version=${tVersion:-1.0}
     - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
-#    - docker build . -t $image
-#    - docker push $image
+    - docker build . -t $image
+    - docker push $image
     - echo "image=$image" >> build.env
   artifacts:
     reports:
       dotenv: build.env
 
-deploy-job:
+cloud-deploy:
   stage: deploy
   image: google/cloud-sdk
   script:
-    - echo deploy $image
-#    - echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && apt-get update -y && apt-get install google-cloud-sdk -y
-#    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
-#    - gcloud config set project $GCP_PROJECT
-#    - gcloud run deploy $GCP_SERVICE --image $image
-#    - gcloud builds submit . --config=cloudbuild.yml
+    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
+    - gcloud config set project $GCP_PROJECT
+    - gcloud run deploy $GCP_SERVICE --image $image --region $GCP_REGION --platform managed --quiet --allow-unauthenticated --concurrency 5 --labels stage=prod 
   dependencies:
-    - build-job
+    - docker-build
