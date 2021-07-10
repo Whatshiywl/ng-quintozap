@@ -7,7 +7,7 @@ build-job:
   script:
     - docker info
     - ls -la
-    - tVersion=$(./get-version.sh)
+    - tVersion=$(bash ./get-version.sh)
     - version=${tVersion:-1.0}
 #    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
 #    - gcloud config set project $GCP_PROJECT
