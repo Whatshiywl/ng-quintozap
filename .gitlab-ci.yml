@@ -4,9 +4,10 @@ build-job:
   script:
     - tVersion=$(./get-version.sh)
     - version=${tVersion:-1.0}
-    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
-    - gcloud config set project $GCP_PROJECT
-    - gcloud builds submit . --config=cloudbuild.yml
+    - docker version
+#    - gcloud auth activate-service-account --key-file $GCP_SERVICE_KEY
+#    - gcloud config set project $GCP_PROJECT
+#    - gcloud builds submit . --config=cloudbuild.yml
 
 
 # test-job1:
