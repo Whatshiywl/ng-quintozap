@@ -1,6 +1,8 @@
 build-job:
   stage: build
   image: google/cloud-sdk
+  services:
+    - docker:dind
   script:
     - tVersion=$(./get-version.sh)
     - version=${tVersion:-1.0}
