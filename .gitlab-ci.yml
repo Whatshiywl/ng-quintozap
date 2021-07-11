@@ -9,14 +9,8 @@ docker-build:
     - docker:dind
   before_script:
     - docker info
-    - cat $GCP_SERVICE_KEY | docker login -u _json_key --password-stdin https://gcr.io
   script:
-    - tVersion=$(sh ./get-version.sh)
-    - version=${tVersion:-1.0}
-    - image=gcr.io/$GCP_PROJECT/$GCP_SERVICE:$version
-    - docker build . -t $image
-    - docker push $image
-    - echo "image=$image" >> build.env
+    - build.sh
   artifacts:
     reports:
       dotenv: build.env
@@ -25,9 +19,6 @@ cloud-deploy:
   stage: deploy
   image: google/cloud-sdk
   script:
-    - account=cloud-build-gitlab@bubaxi.iam.gserviceaccount.com
-    - gcloud auth activate-service-account --project $GCP_PROJECT --key-file $GCP_SERVICE_KEY
-    - gcloud config set project $GCP_PROJECT
-    - gcloud run deploy $GCP_SERVICE --service-account $account --image $image --region $GCP_REGION --platform managed --quiet --allow-unauthenticated --concurrency 5 --labels stage=prod 
+    - deploy.sh
   dependencies:
     - docker-build
