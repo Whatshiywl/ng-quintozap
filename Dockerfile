@@ -14,7 +14,7 @@ RUN node node_modules/.bin/ng build --aot
 
 FROM node:16-slim
 WORKDIR /app
-COPY --from=build /prod/node_modules .
+COPY --from=build /prod/node_modules node_modules
 COPY --from=build /build/dist dist
 COPY --from=build /build/server.js .
 ENTRYPOINT [ "node", "server.js" ]
