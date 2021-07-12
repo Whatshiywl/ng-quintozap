@@ -5,7 +5,7 @@ stages:
 
 ng-test:
   stage: test
-  image: whatshiywl/angulartester:1.0.0
+  image: whatshiywl/angulartester:1.0.1
   script:
     - ./test.sh
 
