@@ -1,24 +1,33 @@
 stages:
+  - test
   - build
   - deploy
 
-docker-build:
-  stage: build
-  image: docker
-  services:
-    - docker:dind
-  before_script:
-    - docker info
+ng-test:
+  stage: test
+  image: node:alpine
   script:
-    - build.sh
-  artifacts:
-    reports:
-      dotenv: build.env
+    - ./test.sh
 
-cloud-deploy:
-  stage: deploy
-  image: google/cloud-sdk
-  script:
-    - deploy.sh
-  dependencies:
-    - docker-build
+# docker-build:
+#   stage: build
+#   image: docker
+#   services:
+#     - docker:dind
+#   before_script:
+#     - docker info
+#   script:
+#     - ./build.sh
+#   artifacts:
+#     reports:
+#       dotenv: build.env
+#   dependencies:
+#     - ng-test
+
+# cloud-deploy:
+#   stage: deploy
+#   image: google/cloud-sdk
+#   script:
+#     - ./deploy.sh
+#   dependencies:
+#     - docker-build
