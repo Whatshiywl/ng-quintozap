@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ZapListing, ZapService } from './zap.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ZapFilter, ZapListing, ZapService } from './zap.service';
 
 @Component({
   selector: 'app-root',
@@ -10,19 +11,47 @@ export class AppComponent {
   title = 'ng-quintozap';
   listings!: ZapListing[];
 
+  filterForm: FormGroup;
+
+  mapParams!: {
+    center: google.maps.LatLngLiteral,
+    bounds?: google.maps.LatLngBoundsLiteral
+  };
+
   constructor(
+    fb: FormBuilder,
     private zapService: ZapService
-  ) { }
+  ) {
+    this.filterForm = fb.group({
+      minPrice: fb.control(undefined),
+      maxPrice: fb.control(undefined),
+    });
+  }
 
   onBoundsChanged(map: google.maps.Map<Element>) {
     const center = map.getCenter().toJSON();
     const bounds = map.getBounds()?.toJSON();
-    console.log('center', center);
-    console.log('bounds', bounds);
-    this.zapService.getZap(center).subscribe(result => {
-      const withPoint = result.filter(el => el.listing.address.point);
-      console.log(withPoint);
-      this.listings = withPoint;
+    this.mapParams = { center, bounds };
+    this.filter();
+  }
+
+  filter() {
+    const currentFilter: ZapFilter = {
+      mapParams: this.mapParams,
+      ...this.filterForm.value
+    };
+    this.zapService.getZap(currentFilter).subscribe(result => {
+      const filtered = result.filter(el => {
+        const pricing = el.listing.pricingInfos.find(info => info.businessType === 'RENTAL');
+        if (!pricing) return false;
+        const rent = Math.round((+pricing.price || 0) + (+pricing.monthlyCondoFee || 0));
+        const { minPrice, maxPrice } = this.filterForm.value;
+        if (minPrice && rent < minPrice) return false;
+        if (maxPrice && rent > maxPrice) return false;
+        return true;
+      });
+      console.log(filtered);
+      this.listings = filtered;
     });
   }
 }

@@ -16,8 +16,7 @@ app.get('/api/googlemapsapikey', (_, res) => {
 });
 
 app.get('/api/zap', (req, res) => {
-  const { lat, lng } = req.query;
-  const params = getParams(lat, lng);
+  const params = getParams(req.query);
   const paramsString = toQueryString(params);
   const zapPath = 'https://glue-api.zapimoveis.com.br/v2/listings';
 
@@ -38,9 +37,13 @@ app.listen(port, () => console.log(`Express listening to port ${port}`));
 
 // End express setup
 
-function getParams(lat, lng) {
+function getParams(filter) {
+  const {
+    lat, lng,
+    minPrice, maxPrice
+  } = filter;
   const fields = getIncludeFields();
-  return {
+  const params = {
     unitSubTypes: 'UnitSubType_NONE,DUPLEX,TRIPLEX',
     unitTypes: 'APARTMENT',
     unitTypesV3: 'APARTMENT',
@@ -70,6 +73,9 @@ function getParams(lat, lng) {
     __zt: 'smt:a,mtc:ipl',
     includeFields: fieldsToString(fields)
   };
+  if (minPrice) params['priceMin'] = minPrice;
+  if (maxPrice) params['priceMax'] = maxPrice;
+  return params;
 }
 
 function getHeaders() {

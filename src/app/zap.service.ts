@@ -108,6 +108,15 @@ export interface ZapListing {
   }[]
 }
 
+export interface ZapFilter {
+  mapParams?: {
+    center: google.maps.LatLngLiteral,
+    bounds?: google.maps.LatLngBoundsLiteral
+  },
+  minPrice: number,
+  maxPrice: number
+}
+
 @Injectable()
 export class ZapService {
   private zapApi = `${environment.apiPrefix}/api/zap`;
@@ -116,18 +125,20 @@ export class ZapService {
     console.log(environment);
   }
 
-  getZap(center: google.maps.LatLngLiteral) {
+  getZap(zapFilter: ZapFilter) {
     const path = `${location.origin}${this.zapApi}`;
     return this.client.get<{
       search: {
         result: { listings: ZapListing[], totalCount: number }
       }
     }>(path, {
-      params: this.getParams(center)
+      params: this.getParams(zapFilter)
     }).pipe(
       map(data => {
         const listings = data.search.result.listings;
-        listings.forEach(el => {
+        const filtered = listings
+        .filter(el => el.listing.address.point);
+        filtered.forEach(el => {
           el.accountLink.href = `https://www.zapimoveis.com.br${el.accountLink.href}`;
           el.link.href = `https://www.zapimoveis.com.br${el.link.href}`;
           if (el.listing.address.point) {
@@ -137,15 +148,23 @@ export class ZapService {
             };
           }
         });
-        return listings;
+        return filtered;
       })
     );
   }
 
-  private getParams(center: google.maps.LatLngLiteral) {
-    return new HttpParams()
-    .append('lat', `${center.lat}`)
-    .append('lng', `${center.lng}`);
+  private getParams(filter: ZapFilter) {
+    let params = new HttpParams()
+    if (filter.mapParams?.center) {
+      const { center } = filter.mapParams;
+      params = params
+      .append('lat', `${center.lat}`)
+      .append('lng', `${center.lng}`);
+    }
+    const { minPrice, maxPrice } = filter;
+    if (minPrice) params = params.append('minPrice', `${minPrice}`);
+    if (maxPrice) params = params.append('maxPrice', `${maxPrice}`);
+    return params;
   }
 
 }

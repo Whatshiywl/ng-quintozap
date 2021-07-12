@@ -1,4 +1,28 @@
-<app-map
-(boundsChanged)="onBoundsChanged($event)"
-[listings]="listings"
-></app-map>
+<mat-drawer-container class="example-container" hasBackdrop="false">
+  <mat-drawer #drawer mode="over" position="end">
+    <div class="form-wrapper">
+      <form class="filter-form" [formGroup]="filterForm">
+        <button mat-raised-button class="apply-filter-button" (click)="drawer.toggle() && filter()">Filter</button>
+        <div class="price-form">
+          <div class="price-form-inputs">
+            <mat-form-field appearance="outline">
+              <mat-label>Min Price</mat-label>
+              <input matInput placeholder="0" formControlName="minPrice" type="number">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Max Price</mat-label>
+              <input matInput placeholder="10000" formControlName="maxPrice" type="number">
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content>
+    <app-map
+    (boundsChanged)="onBoundsChanged($event)"
+    [listings]="listings"
+    ></app-map>
+    <button mat-raised-button class="side-toggle-button" (click)="drawer.toggle()">Filter</button>
+  </mat-drawer-content>
+</mat-drawer-container>

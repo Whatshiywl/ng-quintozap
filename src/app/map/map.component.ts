@@ -105,7 +105,7 @@ export class MapComponent implements OnChanges {
   }
 
   getRectLeft(position?: google.maps.LatLngLiteral) {
-    if (!position) return 0;
+    if (!position) {console.log(position); return 0;}
     const mapBounds = this.gMap.getBounds()?.toJSON();
     if (!mapBounds) return 0;
     const { width } = this.wrapperBounds;
@@ -125,8 +125,9 @@ export class MapComponent implements OnChanges {
   }
 
   getFullListingPrice(listing: ZapListing) {
-    const pricing = listing.listing.pricingInfos[0];
-    const rent = (+pricing.price || 0) + (+pricing.monthlyCondoFee || 0) + (+pricing.yearlyIptu / 12 || 0);
+    const pricing = listing.listing.pricingInfos.find(info => info.businessType === 'RENTAL');
+    if (!pricing) return 0;
+    const rent = (+pricing.price || 0) + (+pricing.monthlyCondoFee || 0);
     return Math.round(rent);
   }
 }
