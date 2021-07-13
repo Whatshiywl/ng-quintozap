@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { map } from "rxjs/operators";
+import { interval } from "rxjs";
+import { map, mergeMap, switchMap, takeWhile } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
 export interface ZapAddress {
@@ -114,7 +115,9 @@ export interface ZapFilter {
     bounds?: google.maps.LatLngBoundsLiteral
   },
   minPrice: number,
-  maxPrice: number
+  maxPrice: number,
+  size?: number,
+  page?: number
 }
 
 @Injectable()
@@ -126,16 +129,20 @@ export class ZapService {
   }
 
   getZap(zapFilter: ZapFilter) {
-    const path = `${location.origin}${this.zapApi}`;
-    return this.client.get<{
-      search: {
-        result: { listings: ZapListing[], totalCount: number }
-      }
-    }>(path, {
-      params: this.getParams(zapFilter)
-    }).pipe(
-      map(data => {
-        const listings = data.search.result.listings;
+    zapFilter.size = zapFilter.size || 300;
+    return interval(500)
+    .pipe(
+      mergeMap(page => {
+        zapFilter.page = page + 1;
+        return this.getFromApi(zapFilter);
+      }),
+      takeWhile(results => {
+        const resultSize = results.length;
+        const keepGoing = resultSize === zapFilter.size;
+        console.log(`Got ${resultSize} results with limit ${zapFilter.size}. Will keep going? ${keepGoing}`);
+        return keepGoing && (zapFilter.page ? zapFilter.page < 1 : true);
+      }, true),
+      map(listings => {
         const filtered = listings
         .filter(el => el.listing.address.point);
         filtered.forEach(el => {
@@ -153,6 +160,21 @@ export class ZapService {
     );
   }
 
+  private getFromApi(zapFilter: ZapFilter) {
+    const path = `${location.origin}${this.zapApi}`;
+    return this.client.get<{
+      search: {
+        result: { listings: ZapListing[], totalCount: number }
+      }
+    }>(path, {
+      params: this.getParams(zapFilter)
+    }).pipe(
+      map(data => {
+        return data.search.result.listings;
+      })
+    );
+  }
+
   private getParams(filter: ZapFilter) {
     let params = new HttpParams()
     if (filter.mapParams?.center) {
@@ -161,9 +183,19 @@ export class ZapService {
       .append('lat', `${center.lat}`)
       .append('lng', `${center.lng}`);
     }
-    const { minPrice, maxPrice } = filter;
+    if (filter.mapParams?.bounds) {
+      const { bounds: { east, west, north, south } } = filter.mapParams;
+      const viewport = `${east},${north}|${west},${south}`;
+      params = params.append('viewport', viewport);
+    }
+    const { minPrice, maxPrice, size, page } = filter;
     if (minPrice) params = params.append('minPrice', `${minPrice}`);
     if (maxPrice) params = params.append('maxPrice', `${maxPrice}`);
+    if (size) params = params.append('size', size);
+    if (page) {
+      params = params.append('page', page);
+      if (size) params = params.append('from', (page - 1) * size);
+    }
     return params;
   }
 }

@@ -1,6 +1,7 @@
 .map-wrapper {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 
   ::ng-deep .map-container {
     width: 100%;

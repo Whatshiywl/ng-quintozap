@@ -39,8 +39,9 @@ app.listen(port, () => console.log(`Express listening to port ${port}`));
 
 function getParams(filter) {
   const {
-    lat, lng,
-    minPrice, maxPrice
+    lat, lng, viewport,
+    minPrice, maxPrice,
+    size, from, page
   } = filter;
   const fields = getIncludeFields();
   const params = {
@@ -53,23 +54,24 @@ function getParams(filter) {
     business: 'RENTAL',
     listingType: 'USED',
     portal: 'ZAP',
-    size: '300',
-    from: '0',
-    page: '1',
+    size: size || '300',
+    from: from || '0',
+    page: page || '1',
     cityWiseStreet: '1',
     developmentsSize: '3',
     superPremiumSize: '0',
-    addressCountry: '',
-    addressState: 'Rio de Janeiro',
-    addressCity: 'Rio de Janeiro',
-    addressZone: '',
-    addressNeighborhood: '',
-    addressStreet: '',
-    addressAccounts: '',
-    addressType: 'city',
-    addressLocationId: 'BR>Rio de Janeiro>NULL>Rio de Janeiro',
-    addressPointLat: `${lat}`,
-    addressPointLon: `${lng}`,
+    // addressCountry: '',
+    // addressState: 'Rio de Janeiro',
+    // addressCity: 'Rio de Janeiro',
+    // addressZone: '',
+    // addressNeighborhood: '',
+    // addressStreet: '',
+    // addressAccounts: '',
+    // addressType: 'point',
+    // addressLocationId: 'BR>Rio de Janeiro>NULL>Rio de Janeiro',
+    // addressPointLat: `${lat}`,
+    // addressPointLon: `${lng}`,
+    viewport,
     __zt: 'smt:a,mtc:ipl',
     includeFields: fieldsToString(fields)
   };

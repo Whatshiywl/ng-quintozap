@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Subscriber, Subscription } from 'rxjs';
 import { ZapFilter, ZapListing, ZapService } from './zap.service';
 
 @Component({
@@ -17,6 +18,8 @@ export class AppComponent {
     center: google.maps.LatLngLiteral,
     bounds?: google.maps.LatLngBoundsLiteral
   };
+
+  zapSubs!: Subscription;
 
   constructor(
     fb: FormBuilder,
@@ -40,7 +43,9 @@ export class AppComponent {
       mapParams: this.mapParams,
       ...this.filterForm.value
     };
-    this.zapService.getZap(currentFilter).subscribe(result => {
+    this.listings = [ ];
+    if (this.zapSubs) this.zapSubs.unsubscribe();
+    this.zapSubs = this.zapService.getZap(currentFilter).subscribe(result => {
       const filtered = result.filter(el => {
         const pricing = el.listing.pricingInfos.find(info => info.businessType === 'RENTAL');
         if (!pricing) return false;
@@ -51,7 +56,7 @@ export class AppComponent {
         return true;
       });
       console.log(filtered);
-      this.listings = filtered;
+      this.listings = this.listings.concat(filtered);
     });
   }
 }
