@@ -166,5 +166,4 @@ export class ZapService {
     if (maxPrice) params = params.append('maxPrice', `${maxPrice}`);
     return params;
   }
-
 }
