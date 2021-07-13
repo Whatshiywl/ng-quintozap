@@ -43,6 +43,7 @@ function getParams(filter) {
     minPrice, maxPrice,
     size, from, page
   } = filter;
+  console.log(viewport);
   const fields = getIncludeFields();
   const params = {
     unitSubTypes: 'UnitSubType_NONE,DUPLEX,TRIPLEX',

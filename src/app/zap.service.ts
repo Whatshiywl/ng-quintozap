@@ -137,10 +137,13 @@ export class ZapService {
         return this.getFromApi(zapFilter);
       }),
       takeWhile(results => {
-        const resultSize = results.length;
-        const keepGoing = resultSize === zapFilter.size;
-        console.log(`Got ${resultSize} results with limit ${zapFilter.size}. Will keep going? ${keepGoing}`);
-        return keepGoing && (zapFilter.page ? zapFilter.page < 1 : true);
+        // const resultSize = results.length;
+        // const keepGoing = resultSize === zapFilter.size;
+        const belowRetryLimit = zapFilter.page ? zapFilter.page < 5 : true;
+        // console.log(`Got ${resultSize} results with limit ${zapFilter.size}. Will keep going? ${keepGoing}`);
+        // return keepGoing && (zapFilter.page ? zapFilter.page < 1 : true);
+        // return !results.length;
+        return !results.length && belowRetryLimit;
       }, true),
       map(listings => {
         const filtered = listings
