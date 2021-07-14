@@ -8,6 +8,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { MapModule } from './map/map.module';
+import { QuintoService } from './quinto.service';
 import { ZapService } from './zap.service';
 
 describe('AppComponent', () => {
@@ -29,7 +30,8 @@ describe('AppComponent', () => {
         MatSliderModule
       ],
       providers: [
-        ZapService
+        ZapService,
+        QuintoService
       ]
     })
     .compileComponents();

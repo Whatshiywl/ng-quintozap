@@ -21,7 +21,8 @@
   <mat-drawer-content>
     <app-map
     (boundsChanged)="onBoundsChanged($event)"
-    [listings]="listings"
+    [zapListings]="zapListings"
+    [quintoListings]="quintoListings"
     ></app-map>
     <button mat-raised-button class="side-toggle-button" (click)="drawer.toggle()">Filter</button>
   </mat-drawer-content>

@@ -16,5 +16,5 @@ FROM node:16-slim
 WORKDIR /app
 COPY --from=build /prod/node_modules node_modules
 COPY --from=build /build/dist dist
-COPY --from=build /build/server.js .
-ENTRYPOINT [ "node", "server.js" ]
+COPY --from=build /build/server server
+ENTRYPOINT [ "node", "server" ]

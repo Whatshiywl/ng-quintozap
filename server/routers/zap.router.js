@@ -1,21 +1,7 @@
-const fs = require('fs');
-if (fs.existsSync('.env')) {
-  require('dotenv').config();
-}
-
-const path = require('path');
 const fetch = require('node-fetch');
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
+const router = require('express').Router();
 
-app.use('/', express.static(path.join(__dirname, 'dist', 'ng-quintozap')));
-
-app.get('/api/googlemapsapikey', (_, res) => {
-  res.send(process.env.MAPS_API_KEY || '');
-});
-
-app.get('/api/zap', (req, res) => {
+router.get('/', (req, res) => {
   const params = getParams(req.query);
   const paramsString = toQueryString(params);
   const zapPath = 'https://glue-api.zapimoveis.com.br/v2/listings';
@@ -32,10 +18,6 @@ app.get('/api/zap', (req, res) => {
   .then(data => res.json(data))
   .catch(err => console.error(err));
 });
-
-app.listen(port, () => console.log(`Express listening to port ${port}`));
-
-// End express setup
 
 function getParams(filter) {
   const {
@@ -189,3 +171,5 @@ function getAccountFields() {
 function toQueryString(params) {
   return Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
 }
+
+module.exports = router;

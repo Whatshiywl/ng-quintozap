@@ -14,17 +14,26 @@
   top: 10px;
   left: 10px;
   width: 60px;
-  background-color: darkcyan;
   color: white;
   text-align: center;
   display: flex;
   flex-direction: column;
   border: 2px solid black;
   border-radius: 5px;
+  opacity: 0.9;
+
+  &.zap-listing {
+    background-color: #008295;
+  }
+
+  &.quinto-listing {
+    background-color: #5063f0;
+  }
 
   &:hover {
     z-index: 10;
     box-shadow: 0 0 10px black;
+    opacity: 1;
   }
 
   .counters {

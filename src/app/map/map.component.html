@@ -3,8 +3,9 @@
   width="null" height="null"
   (boundsChanged)="boundsChangedSubject.next()">
   </google-map>
-  <div *ngFor="let listing of listings"
-  class="listing" (click)="onListingClick(listing)"
+
+  <div *ngFor="let listing of zapListings"
+  class="listing zap-listing" (click)="onZapListingClick(listing)"
   [style.top]="getRectTop(listing.listing.address.mapPosition) + 'px'"
   [style.left]="getRectLeft(listing.listing.address.mapPosition) + 'px'">
     <div class="counters">
@@ -19,5 +20,23 @@
       </div>
     </div>
     <span class="price">{{listing.listing.fullRentalPrice}}</span>
+  </div>
+
+  <div *ngFor="let listing of quintoListings"
+  class="listing quinto-listing" (click)="onQuintoListingClick(listing)"
+  [style.top]="getRectTop(listing._source.mapPosition) + 'px'"
+  [style.left]="getRectLeft(listing._source.mapPosition) + 'px'">
+    <div class="counters">
+      <div class="counter-element">
+        {{listing._source.area}}
+      </div>
+      <div class="counter-element">
+        {{listing._source.bedrooms}}
+      </div>
+      <!-- <div class="counter-element">
+        {{listing._source}}
+      </div> -->
+    </div>
+    <span class="price">{{listing._source.totalCost}}</span>
   </div>
 </div>

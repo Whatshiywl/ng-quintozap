@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MapModule } from './map/map.module';
 import { ZapService } from './zap.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { QuintoService } from './quinto.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatSliderModule
   ],
   providers: [
-    ZapService
+    ZapService,
+    QuintoService
   ],
   bootstrap: [AppComponent]
 })

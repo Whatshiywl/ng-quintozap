@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { interval } from "rxjs";
 import { map, mergeMap, switchMap, takeWhile, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
+import { Filter } from "./app.component";
 
 export interface ZapAddress {
   city: string,
@@ -110,26 +111,13 @@ export interface ZapListing {
   }[]
 }
 
-export interface ZapFilter {
-  mapParams?: {
-    center: google.maps.LatLngLiteral,
-    bounds?: google.maps.LatLngBoundsLiteral
-  },
-  minPrice: number,
-  maxPrice: number,
-  size?: number,
-  page?: number
-}
-
 @Injectable()
 export class ZapService {
   private zapApi = `${environment.apiPrefix}/api/zap`;
 
-  constructor(private client: HttpClient) {
-    console.log(environment);
-  }
+  constructor(private client: HttpClient) { }
 
-  getZap(zapFilter: ZapFilter) {
+  getZap(zapFilter: Filter) {
     const tempFilter = { ...zapFilter };
     tempFilter.size = tempFilter.size || 300;
     return interval(500)
@@ -168,7 +156,7 @@ export class ZapService {
     );
   }
 
-  private getFromApi(zapFilter: ZapFilter) {
+  private getFromApi(zapFilter: Filter) {
     const path = `${location.origin}${this.zapApi}`;
     return this.client.get<{
       search: {
@@ -176,14 +164,15 @@ export class ZapService {
       }
     }>(path, {
       params: this.getParams(zapFilter)
-    }).pipe(
+    })
+    .pipe(
       map(data => {
         return data.search.result.listings;
       })
     );
   }
 
-  private getParams(filter: ZapFilter) {
+  private getParams(filter: Filter) {
     let params = new HttpParams()
     if (filter.mapParams?.bounds) {
       const { bounds: { east, west, north, south } } = filter.mapParams;

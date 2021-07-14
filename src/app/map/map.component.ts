@@ -5,6 +5,7 @@ import { map, catchError, debounceTime, tap } from "rxjs/operators";
 import { GoogleMap } from "@angular/google-maps";
 import { ZapListing } from "../zap.service";
 import { environment } from "src/environments/environment";
+import { QuintoHit } from "../quinto.service";
 
 @Component({
   selector: 'app-map',
@@ -12,7 +13,8 @@ import { environment } from "src/environments/environment";
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnChanges {
-  @Input() listings!: ZapListing[];
+  @Input() zapListings!: ZapListing[];
+  @Input() quintoListings!: QuintoHit[];
   @Output() boundsChanged: EventEmitter<google.maps.Map<Element>> = new EventEmitter<google.maps.Map<Element>>();
   @ViewChild(GoogleMap) gMap!: GoogleMap;
   @ViewChild('mapWrapper') mapWrapper!: ElementRef;
@@ -65,8 +67,12 @@ export class MapComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.listings) {
-      console.log('listings changed');
+    if (changes.zapListings) {
+      console.log('zap listings changed');
+    }
+
+    if (changes.quintoListings) {
+      console.log('quinto listings changed');
     }
   }
 
@@ -100,8 +106,12 @@ export class MapComponent implements OnChanges {
     } as google.maps.LatLngBoundsLiteral;
   }
 
-  onListingClick(listing: ZapListing) {
+  onZapListingClick(listing: ZapListing) {
     window.open(listing.link.href);
+  }
+
+  onQuintoListingClick(listing: QuintoHit) {
+    window.open(listing.link);
   }
 
   getRectLeft(position?: google.maps.LatLngLiteral) {
