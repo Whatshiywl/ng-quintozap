@@ -3,7 +3,7 @@ stages:
   - build
   - deploy
 
-ng-test:
+.ng-test:
   stage: test
   image: whatshiywl/angulartester:1.0.1
   script:

@@ -4,9 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -28,9 +26,7 @@ import { QuintoService } from './quinto.service';
     MatSidenavModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSliderModule,
-    MatIconModule,
-    MatButtonToggleModule
+    MatIconModule
   ],
   providers: [
     ZapService,
