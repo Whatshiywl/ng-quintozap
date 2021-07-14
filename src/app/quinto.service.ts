@@ -31,7 +31,9 @@ export interface QuintoHitMetadata {
     lon: number
   }
   mapPosition?: google.maps.LatLngLiteral,
-  areaPerThousand: number
+  areaPerThousand: number,
+  pictures: string[],
+  pictureCaptions: string[]
 }
 
 export interface QuintoHit {
@@ -95,6 +97,11 @@ export class QuintoService {
             lng: el._source.location.lon
           };
           el._source.areaPerThousand = Math.round(el._source.area * 1000 / el._source.totalCost);
+          el._source.pictures = el._source.imageList
+          .map(image => {
+            return `https://www.quintoandar.com.br/img/xxl/${image}`;
+          });
+          el._source.pictureCaptions = [ ...el._source.imageCaptionList ];
         });
         return results;
       }),

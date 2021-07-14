@@ -91,7 +91,8 @@ export interface ZapListingMetadata {
   whatsappNumber: string,
   totalCost?: number,
   area?: number,
-  areaPerThousand: number
+  areaPerThousand: number,
+  pictures: string[]
 }
 
 export interface ZapListing {
@@ -150,6 +151,14 @@ export class ZapService {
           el.listing.totalCost = this.getFullListingPrice(el);
           el.listing.area = +el.listing.totalAreas[0] || +el.listing.usableAreas[0];
           el.listing.areaPerThousand = Math.round(el.listing.area * 1000 / el.listing.totalCost);
+          el.listing.pictures = el.medias
+          .filter(media => media.type === 'IMAGE')
+          .map(media => {
+            return media.url
+            .replace('{action}', 'fit-in')
+            .replace('{width}', '800')
+            .replace('{height}', '360');
+          });
         });
         return filtered;
       }),

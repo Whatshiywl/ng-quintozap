@@ -21,6 +21,8 @@
   <mat-drawer-content>
     <app-map
     (boundsChanged)="onBoundsChanged($event)"
+    (zapClicked)="onZapListingClick($event)"
+    (quintoClicked)="onQuintoListingClick($event)"
     [zapListings]="zapListings"
     [quintoListings]="quintoListings"
     ></app-map>

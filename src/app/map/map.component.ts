@@ -16,6 +16,8 @@ export class MapComponent implements OnChanges {
   @Input() zapListings!: ZapListing[];
   @Input() quintoListings!: QuintoHit[];
   @Output() boundsChanged: EventEmitter<google.maps.Map<Element>> = new EventEmitter<google.maps.Map<Element>>();
+  @Output() zapClicked: EventEmitter<ZapListing> = new EventEmitter<ZapListing>();
+  @Output() quintoClicked: EventEmitter<QuintoHit> = new EventEmitter<QuintoHit>();
   @ViewChild(GoogleMap) gMap!: GoogleMap;
   @ViewChild('mapWrapper') mapWrapper!: ElementRef;
 
@@ -100,11 +102,11 @@ export class MapComponent implements OnChanges {
   }
 
   onZapListingClick(listing: ZapListing) {
-    window.open(listing.link.href);
+    this.zapClicked.next(listing);
   }
 
   onQuintoListingClick(listing: QuintoHit) {
-    window.open(listing.link);
+    this.quintoClicked.next(listing);
   }
 
   getRectLeft(position?: google.maps.LatLngLiteral) {

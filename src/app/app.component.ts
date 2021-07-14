@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { InfoComponent } from './info/info.component';
 import { QuintoHit, QuintoService } from './quinto.service';
 import { ZapListing, ZapService } from './zap.service';
 
@@ -39,7 +41,8 @@ export class AppComponent {
   constructor(
     fb: FormBuilder,
     private zapService: ZapService,
-    private quintoService: QuintoService
+    private quintoService: QuintoService,
+    private dialog: MatDialog
   ) {
     this.filterForm = fb.group({
       minPrice: fb.control(undefined),
@@ -127,5 +130,15 @@ export class AppComponent {
         setTimeout(this.filterQuinto.bind(this), 1000);
       }
     });
+  }
+
+  onZapListingClick(listing: ZapListing) {
+    const ref = this.dialog.open(InfoComponent);
+    ref.componentInstance.setZapListing(listing);
+  }
+
+  onQuintoListingClick(listing: QuintoHit) {
+    const ref = this.dialog.open(InfoComponent);
+    ref.componentInstance.setQuintoHit(listing);
   }
 }
