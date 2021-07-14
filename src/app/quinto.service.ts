@@ -30,7 +30,8 @@ export interface QuintoHitMetadata {
     lat: number,
     lon: number
   }
-  mapPosition?: google.maps.LatLngLiteral
+  mapPosition?: google.maps.LatLngLiteral,
+  areaPerThousand: number
 }
 
 export interface QuintoHit {
@@ -87,23 +88,13 @@ export class QuintoService {
         return fullResults && belowRetryLimit;
       }, true),
       map(({ results }) => {
-        // const filtered = results
-        // .filter(el => el.listing.address.point);
         results.forEach(el => {
           el.link = `https://www.quintoandar.com.br/imovel/${el._id}`;
           el._source.mapPosition = {
             lat: el._source.location.lat,
             lng: el._source.location.lon
           };
-          // el.accountLink.href = `https://www.zapimoveis.com.br${el.accountLink.href}`;
-          // el.link.href = `https://www.zapimoveis.com.br${el.link.href}`;
-          // if (el.listing.address.point) {
-          //   el.listing.address.mapPosition = {
-          //     lat: el.listing.address.point.lat,
-          //     lng: el.listing.address.point.lon
-          //   };
-          // }
-          // el.listing.fullRentalPrice = this.getFullListingPrice(el);
+          el._source.areaPerThousand = Math.round(el._source.area * 1000 / el._source.totalCost);
         });
         return results;
       }),

@@ -92,7 +92,7 @@ export class AppComponent {
     if (this.zapSubs) this.zapSubs.unsubscribe();
     this.zapSubs = this.zapService.getZap(currentFilter).subscribe(result => {
       const filtered = result.filter(el => {
-        const rent = el.listing.fullRentalPrice || 0;
+        const rent = el.listing.totalCost || 0;
         const { minPrice, maxPrice } = this.filterForm.value;
         if (minPrice && rent < minPrice) return false;
         if (maxPrice && rent > maxPrice) return false;

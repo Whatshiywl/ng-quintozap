@@ -89,7 +89,9 @@ export interface ZapListingMetadata {
   usableAreas: string[],
   usageTypes: string[],
   whatsappNumber: string,
-  fullRentalPrice?: number
+  totalCost?: number,
+  area?: number,
+  areaPerThousand: number
 }
 
 export interface ZapListing {
@@ -145,7 +147,9 @@ export class ZapService {
               lng: el.listing.address.point.lon
             };
           }
-          el.listing.fullRentalPrice = this.getFullListingPrice(el);
+          el.listing.totalCost = this.getFullListingPrice(el);
+          el.listing.area = +el.listing.totalAreas[0] || +el.listing.usableAreas[0];
+          el.listing.areaPerThousand = Math.round(el.listing.area * 1000 / el.listing.totalCost);
         });
         return filtered;
       }),

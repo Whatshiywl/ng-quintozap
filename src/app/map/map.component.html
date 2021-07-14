@@ -11,16 +11,16 @@
   [style.left]="getRectLeft(listing.listing.address.mapPosition) + 'px'">
     <div class="counters">
       <div class="counter-element">
-        {{listing.listing.totalAreas[0] || listing.listing.usableAreas[0]}}
+        {{listing.listing.area}}
+      </div>
+      <div class="counter-element">
+        {{listing.listing.areaPerThousand}}
       </div>
       <div class="counter-element">
         {{listing.listing.bedrooms}}
       </div>
-      <div class="counter-element">
-        {{listing.listing.bathrooms}}
-      </div>
     </div>
-    <span class="price">{{listing.listing.fullRentalPrice}}</span>
+    <span class="price">{{listing.listing.totalCost}}</span>
   </div>
 
   <div *ngFor="let listing of quintoListings"
@@ -32,11 +32,11 @@
         {{listing._source.area}}
       </div>
       <div class="counter-element">
+        {{listing._source.areaPerThousand}}
+      </div>
+      <div class="counter-element">
         {{listing._source.bedrooms}}
       </div>
-      <!-- <div class="counter-element">
-        {{listing._source}}
-      </div> -->
     </div>
     <span class="price">{{listing._source.totalCost}}</span>
   </div>
