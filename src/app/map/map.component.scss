@@ -13,8 +13,38 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  width: 50px;
+  width: 60px;
   background-color: darkcyan;
   color: white;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid black;
+  border-radius: 5px;
+
+  &:hover {
+    z-index: 10;
+    box-shadow: 0 0 10px black;
+  }
+
+  .counters {
+    display: flex;
+    width: 100%;
+
+    .counter-element {
+      flex-grow: 1;
+
+      &:first-child {
+        border-right: 1px solid black;
+      }
+
+      &:last-child {
+        border-left: 1px solid black;
+      }
+    }
+  }
+
+  .price {
+    border-top: 1px solid black;
+  }
 }

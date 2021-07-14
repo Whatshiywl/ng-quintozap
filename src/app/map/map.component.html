@@ -4,9 +4,20 @@
   (boundsChanged)="boundsChangedSubject.next()">
   </google-map>
   <div *ngFor="let listing of listings"
-  class="listing"(click)="onListingClick(listing)"
+  class="listing" (click)="onListingClick(listing)"
   [style.top]="getRectTop(listing.listing.address.mapPosition) + 'px'"
   [style.left]="getRectLeft(listing.listing.address.mapPosition) + 'px'">
-    {{listing.listing.fullRentalPrice}}
+    <div class="counters">
+      <div class="counter-element">
+        {{listing.listing.totalAreas[0] || listing.listing.usableAreas[0]}}
+      </div>
+      <div class="counter-element">
+        {{listing.listing.bedrooms}}
+      </div>
+      <div class="counter-element">
+        {{listing.listing.bathrooms}}
+      </div>
+    </div>
+    <span class="price">{{listing.listing.fullRentalPrice}}</span>
   </div>
 </div>
