@@ -39,7 +39,7 @@ app.listen(port, () => console.log(`Express listening to port ${port}`));
 
 function getParams(filter) {
   const {
-    lat, lng, viewport,
+    viewport,
     minPrice, maxPrice,
     size, from, page
   } = filter;
@@ -60,17 +60,6 @@ function getParams(filter) {
     cityWiseStreet: '1',
     developmentsSize: '3',
     superPremiumSize: '0',
-    // addressCountry: '',
-    // addressState: 'Rio de Janeiro',
-    // addressCity: 'Rio de Janeiro',
-    // addressZone: '',
-    // addressNeighborhood: '',
-    // addressStreet: '',
-    // addressAccounts: '',
-    // addressType: 'point',
-    // addressLocationId: 'BR>Rio de Janeiro>NULL>Rio de Janeiro',
-    // addressPointLat: `${lat}`,
-    // addressPointLon: `${lng}`,
     viewport,
     __zt: 'smt:a,mtc:ipl',
     includeFields: fieldsToString(fields)

@@ -123,11 +123,4 @@ export class MapComponent implements OnChanges {
     const top = (position.lat - mapBounds.north) * height / mapHeight;
     return top;
   }
-
-  getFullListingPrice(listing: ZapListing) {
-    const pricing = listing.listing.pricingInfos.find(info => info.businessType === 'RENTAL');
-    if (!pricing) return 0;
-    const rent = (+pricing.price || 0) + (+pricing.monthlyCondoFee || 0);
-    return Math.round(rent);
-  }
 }

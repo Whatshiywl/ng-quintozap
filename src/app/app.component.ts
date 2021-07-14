@@ -29,6 +29,17 @@ export class AppComponent {
       minPrice: fb.control(undefined),
       maxPrice: fb.control(undefined),
     });
+
+    const savedJson = localStorage.getItem('filters');
+    if (savedJson) {
+      const saved = JSON.parse(savedJson);
+      this.filterForm.setValue(saved);
+    }
+
+    this.filterForm.valueChanges.subscribe(value => {
+      const toSave = JSON.stringify(value);
+      localStorage.setItem('filters', toSave);
+    });
   }
 
   onBoundsChanged(map: google.maps.Map<Element>) {
@@ -47,9 +58,7 @@ export class AppComponent {
     if (this.zapSubs) this.zapSubs.unsubscribe();
     this.zapSubs = this.zapService.getZap(currentFilter).subscribe(result => {
       const filtered = result.filter(el => {
-        const pricing = el.listing.pricingInfos.find(info => info.businessType === 'RENTAL');
-        if (!pricing) return false;
-        const rent = Math.round((+pricing.price || 0) + (+pricing.monthlyCondoFee || 0));
+        const rent = el.listing.fullRentalPrice || 0;
         const { minPrice, maxPrice } = this.filterForm.value;
         if (minPrice && rent < minPrice) return false;
         if (maxPrice && rent > maxPrice) return false;

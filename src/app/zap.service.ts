@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { interval } from "rxjs";
-import { map, mergeMap, switchMap, takeWhile } from "rxjs/operators";
+import { map, mergeMap, switchMap, takeWhile, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 
 export interface ZapAddress {
@@ -87,7 +87,8 @@ export interface ZapListingMetadata {
   updatedAt: Date,
   usableAreas: string[],
   usageTypes: string[],
-  whatsappNumber: string
+  whatsappNumber: string,
+  fullRentalPrice?: number
 }
 
 export interface ZapListing {
@@ -129,24 +130,23 @@ export class ZapService {
   }
 
   getZap(zapFilter: ZapFilter) {
-    zapFilter.size = zapFilter.size || 300;
+    const tempFilter = { ...zapFilter };
+    tempFilter.size = tempFilter.size || 300;
     return interval(500)
     .pipe(
-      mergeMap(page => {
-        zapFilter.page = page + 1;
-        return this.getFromApi(zapFilter);
+      mergeMap(i => {
+        tempFilter.page = i + 1;
+        return this.getFromApi(tempFilter)
+        .pipe(map(results => ({ results, i })));
       }),
-      takeWhile(results => {
-        // const resultSize = results.length;
-        // const keepGoing = resultSize === zapFilter.size;
-        const belowRetryLimit = zapFilter.page ? zapFilter.page < 5 : true;
-        // console.log(`Got ${resultSize} results with limit ${zapFilter.size}. Will keep going? ${keepGoing}`);
-        // return keepGoing && (zapFilter.page ? zapFilter.page < 1 : true);
-        // return !results.length;
-        return !results.length && belowRetryLimit;
+      takeWhile(({ results, i }) => {
+        const resultSize = results.length;
+        const fullResults = resultSize === tempFilter.size;
+        const belowRetryLimit = i < 5;
+        return fullResults && belowRetryLimit;
       }, true),
-      map(listings => {
-        const filtered = listings
+      map(({ results }) => {
+        const filtered = results
         .filter(el => el.listing.address.point);
         filtered.forEach(el => {
           el.accountLink.href = `https://www.zapimoveis.com.br${el.accountLink.href}`;
@@ -157,9 +157,11 @@ export class ZapService {
               lng: el.listing.address.point.lon
             };
           }
+          el.listing.fullRentalPrice = this.getFullListingPrice(el);
         });
         return filtered;
-      })
+      }),
+      takeWhile(results => results.length === 0, true)
     );
   }
 
@@ -180,12 +182,6 @@ export class ZapService {
 
   private getParams(filter: ZapFilter) {
     let params = new HttpParams()
-    if (filter.mapParams?.center) {
-      const { center } = filter.mapParams;
-      params = params
-      .append('lat', `${center.lat}`)
-      .append('lng', `${center.lng}`);
-    }
     if (filter.mapParams?.bounds) {
       const { bounds: { east, west, north, south } } = filter.mapParams;
       const viewport = `${east},${north}|${west},${south}`;
@@ -200,5 +196,12 @@ export class ZapService {
       if (size) params = params.append('from', (page - 1) * size);
     }
     return params;
+  }
+
+  private getFullListingPrice(listing: ZapListing) {
+    const pricing = listing.listing.pricingInfos.find(info => info.businessType === 'RENTAL');
+    if (!pricing) return 0;
+    const rent = (+pricing.price || 0) + (+pricing.monthlyCondoFee || 0);
+    return Math.round(rent);
   }
 }
