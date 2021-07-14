@@ -66,6 +66,9 @@ export class AppComponent {
       });
       console.log(filtered);
       this.listings = this.listings.concat(filtered);
+      if (!this.listings.length) {
+        setTimeout(this.filter.bind(this), 1000);
+      }
     });
   }
 }

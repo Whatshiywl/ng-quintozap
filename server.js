@@ -50,6 +50,7 @@ function getParams(filter) {
     unitTypesV3: 'APARTMENT',
     usageTypes: 'RESIDENTIAL',
     text: 'Apartamento',
+    displayAddressType: 'ALL',
     categoryPage: 'RESULT',
     business: 'RENTAL',
     listingType: 'USED',

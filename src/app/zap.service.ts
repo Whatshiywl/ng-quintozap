@@ -161,7 +161,10 @@ export class ZapService {
         });
         return filtered;
       }),
-      takeWhile(results => results.length === 0, true)
+      takeWhile(results => {
+        const noResult = results.length === 0;
+        return noResult;
+      }, true)
     );
   }
 
