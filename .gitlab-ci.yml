@@ -21,8 +21,8 @@ docker-build:
   artifacts:
     reports:
       dotenv: build.env
-  dependencies:
-    - ng-test
+  # dependencies:
+  #   - ng-test
 
 cloud-deploy:
   stage: deploy
