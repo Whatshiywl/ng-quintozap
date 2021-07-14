@@ -3,11 +3,11 @@ stages:
   - build
   - deploy
 
-.ng-test:
-  stage: test
-  image: whatshiywl/angulartester:1.0.1
-  script:
-    - ./test.sh
+# ng-test:
+#   stage: test
+#   image: whatshiywl/angulartester:1.0.1
+#   script:
+#     - ./test.sh
 
 docker-build:
   stage: build
