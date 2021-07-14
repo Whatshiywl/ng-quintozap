@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { QuintoHit, QuintoService } from './quinto.service';
 import { ZapListing, ZapService } from './zap.service';
@@ -26,6 +26,7 @@ export class AppComponent {
   quintoListings!: QuintoHit[];
 
   filterForm: FormGroup;
+  autoSearch: FormControl;
 
   mapParams!: {
     center: google.maps.LatLngLiteral,
@@ -45,15 +46,28 @@ export class AppComponent {
       maxPrice: fb.control(undefined),
     });
 
-    const savedJson = localStorage.getItem('filters');
-    if (savedJson) {
-      const saved = JSON.parse(savedJson);
-      this.filterForm.setValue(saved);
+    const savedFilterJson = localStorage.getItem('filters');
+    if (savedFilterJson) {
+      const savedFilter = JSON.parse(savedFilterJson);
+      this.filterForm.setValue(savedFilter);
     }
 
     this.filterForm.valueChanges.subscribe(value => {
       const toSave = JSON.stringify(value);
       localStorage.setItem('filters', toSave);
+    });
+
+    this.autoSearch = fb.control(true);
+
+    const savedAutoSearchString = localStorage.getItem('autoSearch');
+    if (savedAutoSearchString) {
+      const savedAutoSearch = savedAutoSearchString === 'true';
+      this.autoSearch.setValue(savedAutoSearch);
+    }
+
+    this.autoSearch.valueChanges.subscribe(enabled => {
+      localStorage.setItem('autoSearch', enabled);
+      if (enabled) this.filter();
     });
   }
 
@@ -61,7 +75,7 @@ export class AppComponent {
     const center = map.getCenter().toJSON();
     const bounds = map.getBounds()?.toJSON();
     this.mapParams = { center, bounds };
-    this.filter();
+    if (this.autoSearch.value) this.filter();
   }
 
   filter() {

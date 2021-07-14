@@ -24,6 +24,16 @@
     [zapListings]="zapListings"
     [quintoListings]="quintoListings"
     ></app-map>
-    <button mat-raised-button class="side-toggle-button" (click)="drawer.toggle()">Filter</button>
+    <div class="side-toolbar">
+      <button>
+        <mat-icon (click)="filter()">search</mat-icon>
+      </button>
+      <button mat-raised-button
+      (click)="autoSearch.setValue(!autoSearch.value)">
+        <mat-icon *ngIf="autoSearch.value">find_replace</mat-icon>
+        <mat-icon *ngIf="!autoSearch.value">search_off</mat-icon>
+      </button>
+      <button mat-raised-button class="side-toggle-button" (click)="drawer.toggle()">Filter</button>
+    </div>
   </mat-drawer-content>
 </mat-drawer-container>

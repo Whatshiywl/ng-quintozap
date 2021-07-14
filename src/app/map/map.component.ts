@@ -30,16 +30,6 @@ export class MapComponent implements OnChanges {
 
   wrapperBounds!: { width: number, height: number };
 
-  bounds!: google.maps.LatLngBoundsLiteral;
-  rectOptions: google.maps.RectangleOptions = {
-    fillColor: 'red',
-    fillOpacity: 1,
-    strokeWeight: 0,
-    clickable: true,
-    editable: true,
-    draggable: true
-  };
-
   constructor(httpClient: HttpClient) {
     const mapsKeyApi = `${environment.apiPrefix}/api/googlemapsapikey`;
     httpClient.get(`${location.origin}${mapsKeyApi}`, { responseType: 'text' }).subscribe(key => {
@@ -64,6 +54,12 @@ export class MapComponent implements OnChanges {
       clearInterval(interval);
       this.onMapLoaded();
     }, 100);
+
+    const savedMapOptionsJson = localStorage.getItem('mapOptions');
+    if (savedMapOptionsJson && savedMapOptionsJson !== 'undefined') {
+      const savedMapOptions = JSON.parse(savedMapOptionsJson);
+      this.options = savedMapOptions;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -83,27 +79,24 @@ export class MapComponent implements OnChanges {
   onBoundsChanged() {
     const map = this.gMap.googleMap;
     this.boundsChanged.emit(map);
+    this.updateMapOptions();
+  }
+
+  updateMapOptions() {
+    const map = this.gMap.googleMap;
     if (!map) return;
-    const newBounds = this.getInfoBoundsAt(map.getCenter().toJSON(), map.getBounds()?.toJSON());
-    if (newBounds) this.bounds = newBounds;
+    const center = map.getCenter().toJSON();
+    const zoom = map.getZoom();
+    const mapTypeId = map.getMapTypeId();
+    const options: google.maps.MapOptions = {
+      center, zoom, mapTypeId
+    };
+    const toSave = JSON.stringify(options);
+    localStorage.setItem('mapOptions', toSave);
   }
 
   get center() {
     return this.gMap.googleMap?.getCenter().toJSON();
-  }
-
-  getInfoBoundsAt(position: google.maps.LatLngLiteral, bounds?: google.maps.LatLngBoundsLiteral) {
-    if (!bounds) return;
-    const height = bounds.north - bounds.south;
-    const width = bounds.east - bounds.west;
-    const dLat = 0.02 * height;
-    const dLng = 0.06 * width;
-    return {
-      east: position.lng + dLng / 2,
-      north: position.lat + dLat / 2,
-      south: position.lat - dLat / 2,
-      west: position.lng - dLng / 2,
-    } as google.maps.LatLngBoundsLiteral;
   }
 
   onZapListingClick(listing: ZapListing) {

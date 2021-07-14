@@ -1,7 +1,8 @@
 <div class="map-wrapper" *ngIf="apiLoaded | async" #mapWrapper>
   <google-map [options]="options"
   width="null" height="null"
-  (boundsChanged)="boundsChangedSubject.next()">
+  (boundsChanged)="boundsChangedSubject.next()"
+  (maptypeidChanged)="updateMapOptions()">
   </google-map>
 
   <div *ngFor="let listing of zapListings"
