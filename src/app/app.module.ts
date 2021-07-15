@@ -7,6 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,7 +37,10 @@ import { SwiperModule } from 'swiper/angular';
     MatIconModule,
     MatDialogModule,
     SwiperModule,
-    MatChipsModule
+    MatChipsModule,
+    ClipboardModule,
+    MatButtonModule,
+    MatSnackBarModule
   ],
   providers: [
     ZapService,

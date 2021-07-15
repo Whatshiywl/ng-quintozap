@@ -1,11 +1,13 @@
 import { Component } from "@angular/core";
 import { QuintoHit } from "../quinto.service";
 import { ZapListing } from "../zap.service";
+import { Clipboard } from "@angular/cdk/clipboard";
 
 import SwiperCore, {
   Keyboard,
   Mousewheel
 } from 'swiper/core';
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Mousewheel]);
@@ -30,6 +32,11 @@ export class InfoComponent {
     pictureCaptions: string[],
     rooms: number
   };
+
+  constructor(
+    private clipboard: Clipboard,
+    private snack: MatSnackBar
+  ) { }
 
   setZapListing(listing: ZapListing) {
     this.linkButton = 'Zap Imóveis';
@@ -62,5 +69,11 @@ export class InfoComponent {
   openLink() {
     if (!this.data) return;
     window.open(this.data.link);
+  }
+
+  copyLink() {
+    if (!this.data) return;
+    this.clipboard.copy(this.data.link);
+    this.snack.open('Link copied to clipboard', 'OK', { duration: 3000 });
   }
 }

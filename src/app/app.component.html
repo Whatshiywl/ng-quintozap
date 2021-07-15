@@ -27,7 +27,7 @@
     [quintoListings]="quintoListings"
     ></app-map>
     <div class="side-toolbar">
-      <button>
+      <button mat-raised-button>
         <mat-icon (click)="filter()">search</mat-icon>
       </button>
       <button mat-raised-button
@@ -35,7 +35,10 @@
         <mat-icon *ngIf="autoSearch.value">find_replace</mat-icon>
         <mat-icon *ngIf="!autoSearch.value">search_off</mat-icon>
       </button>
-      <button mat-raised-button class="side-toggle-button" (click)="drawer.toggle()">Filter</button>
+      <button mat-raised-button
+      (click)="drawer.toggle()">
+        <mat-icon>filter_list</mat-icon>
+      </button>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>

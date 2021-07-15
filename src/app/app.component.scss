@@ -13,15 +13,10 @@
   display: flex;
 
   button {
-    flex-shrink: 1;
 
     mat-icon {
       transform: rotate(90deg);
     }
-  }
-
-  .side-toggle-button {
-    flex-grow: 1;
   }
 }
 
