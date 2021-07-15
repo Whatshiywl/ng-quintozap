@@ -1,23 +1,20 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subject } from "rxjs";
 import { map, catchError, debounceTime, tap } from "rxjs/operators";
 import { GoogleMap } from "@angular/google-maps";
-import { ZapListing } from "../zap.service";
 import { environment } from "src/environments/environment";
-import { QuintoHit } from "../quinto.service";
+import { CommonListing } from "../info/info.component";
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnChanges {
-  @Input() zapListings!: ZapListing[];
-  @Input() quintoListings!: QuintoHit[];
+export class MapComponent {
+  @Input() listings!: CommonListing[];
   @Output() boundsChanged: EventEmitter<google.maps.Map<Element>> = new EventEmitter<google.maps.Map<Element>>();
-  @Output() zapClicked: EventEmitter<ZapListing> = new EventEmitter<ZapListing>();
-  @Output() quintoClicked: EventEmitter<QuintoHit> = new EventEmitter<QuintoHit>();
+  @Output() listingClicked: EventEmitter<CommonListing> = new EventEmitter<CommonListing>();
   @ViewChild(GoogleMap) gMap!: GoogleMap;
   @ViewChild('mapWrapper') mapWrapper!: ElementRef;
 
@@ -64,16 +61,6 @@ export class MapComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.zapListings) {
-      console.log('zap listings changed');
-    }
-
-    if (changes.quintoListings) {
-      console.log('quinto listings changed');
-    }
-  }
-
   onMapLoaded() {
     console.log('map loaded', this.gMap);
   }
@@ -99,14 +86,6 @@ export class MapComponent implements OnChanges {
 
   get center() {
     return this.gMap.googleMap?.getCenter().toJSON();
-  }
-
-  onZapListingClick(listing: ZapListing) {
-    this.zapClicked.next(listing);
-  }
-
-  onQuintoListingClick(listing: QuintoHit) {
-    this.quintoClicked.next(listing);
   }
 
   getRectLeft(position?: google.maps.LatLngLiteral) {

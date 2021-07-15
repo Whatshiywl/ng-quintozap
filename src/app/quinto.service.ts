@@ -1,9 +1,10 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { interval } from "rxjs";
-import { map, mergeMap, switchMap, takeWhile, tap } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { first, map, takeWhile } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { Filter } from "./app.component";
+import { CommonListing, ListingOrigin, ListingResult } from "./info/info.component";
 
 export interface QuintoHitMetadata {
   activeSpecialConditions: any,
@@ -30,10 +31,6 @@ export interface QuintoHitMetadata {
     lat: number,
     lon: number
   }
-  mapPosition?: google.maps.LatLngLiteral,
-  areaPerThousand: number,
-  pictures: string[],
-  pictureCaptions: string[]
 }
 
 export interface QuintoHit {
@@ -70,45 +67,39 @@ export interface QuintoResult {
 @Injectable()
 export class QuintoService {
   private quintoApi = `${environment.apiPrefix}/api/quinto`;
+  readonly listings$: Subject<ListingResult> = new Subject<ListingResult>();
+  private origin: ListingOrigin = 'quinto'
 
   constructor(private client: HttpClient) { }
 
-  getZap(quintoFilter: Filter) {
+  filter(quintoFilter: Filter) {
+    const obs = this.getListings(quintoFilter);
+    obs.pipe(first())
+    .subscribe(results => this.listings$.next(results));
+    return obs;
+  }
+
+  getListings(quintoFilter: Filter) {
     const tempFilter = { ...quintoFilter };
     tempFilter.size = tempFilter.size || 300;
-    return interval(500)
+    return this.getFromApi(quintoFilter)
     .pipe(
-      mergeMap(i => {
-        tempFilter.page = i + 1;
-        return this.getFromApi(tempFilter)
-        .pipe(map(results => ({ results, i })));
-      }),
-      takeWhile(({ results, i }) => {
+      takeWhile(results => {
         const resultSize = results.length;
         const fullResults = resultSize === tempFilter.size;
-        const belowRetryLimit = i < 5;
-        return fullResults && belowRetryLimit;
+        return fullResults;
       }, true),
-      map(({ results }) => {
-        results.forEach(el => {
-          el.link = `https://www.quintoandar.com.br/imovel/${el._id}`;
-          el._source.mapPosition = {
-            lat: el._source.location.lat,
-            lng: el._source.location.lon
-          };
-          el._source.areaPerThousand = Math.round(el._source.area * 1000 / el._source.totalCost);
-          el._source.pictures = el._source.imageList
-          .map(image => {
-            return `https://www.quintoandar.com.br/img/xxl/${image}`;
-          });
-          el._source.pictureCaptions = [ ...el._source.imageCaptionList ];
-        });
-        return results;
-      }),
       takeWhile(results => {
         const noResult = results.length === 0;
         return noResult;
-      }, true)
+      }, true),
+      map(results => {
+        return {
+          origin: this.origin,
+          results: results.map(this.toCommonListing.bind(this)),
+          filter: quintoFilter
+        } as ListingResult;
+      })
     );
   }
 
@@ -134,6 +125,33 @@ export class QuintoService {
       from
     };
     return body;
+  }
+
+  private toCommonListing(result: QuintoHit) {
+    const areaPerThousand = Math.round(result._source.area * 1000 / result._source.totalCost);
+    const pictures = result._source.imageList
+    .map(image => {
+      return `https://www.quintoandar.com.br/img/xxl/${image}`;
+    });
+    const pictureCaptions = [ ...result._source.imageCaptionList ];
+    const mapped: CommonListing = {
+      class: 'quinto-listing',
+      origin: this.origin,
+      id: result._id,
+      title: result._source.address,
+      totalCost: result._source.totalCost,
+      area: result._source.area,
+      areaPerThousand,
+      link: `https://www.quintoandar.com.br/imovel/${result._id}`,
+      pictures,
+      pictureCaptions,
+      rooms: result._source.bedrooms,
+      mapPosition: {
+        lat: result._source.location.lat,
+        lng: result._source.location.lon
+      }
+    };
+    return mapped;
   }
 
 }

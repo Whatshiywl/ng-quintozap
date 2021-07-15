@@ -8,6 +8,30 @@ import SwiperCore, {
   Mousewheel
 } from 'swiper/core';
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { Filter } from "../app.component";
+
+export type ListingOrigin = 'zap' | 'quinto';
+
+export interface CommonListing {
+  class: 'zap-listing' | 'quinto-listing',
+  origin: ListingOrigin,
+  id: string,
+  title: string,
+  totalCost: number
+  area: number,
+  areaPerThousand: number,
+  link: string,
+  pictures: string[],
+  pictureCaptions: string[],
+  rooms: number,
+  mapPosition: google.maps.LatLngLiteral
+}
+
+export interface ListingResult {
+  origin: ListingOrigin,
+  results: CommonListing[],
+  filter: Filter
+}
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Mousewheel]);
@@ -38,32 +62,26 @@ export class InfoComponent {
     private snack: MatSnackBar
   ) { }
 
-  setZapListing(listing: ZapListing) {
+  setZapListing(listing: CommonListing) {
     this.linkButton = 'Zap Imóveis';
-    this.data = {
-      title: listing.listing.title,
-      totalCost: listing.listing.totalCost || 0,
-      area: listing.listing.area || 0,
-      areaPerThousand: listing.listing.areaPerThousand || 0,
-      link: listing.link.href,
-      pictures: listing.listing.pictures,
-      pictureCaptions: [ ],
-      rooms: listing.listing.bedrooms[0]
-    };
+    this.data = listing;
   }
 
-  setQuintoHit(listing: QuintoHit) {
+  setQuintoHit(listing: CommonListing) {
     this.linkButton = 'Quinto Andar';
-    this.data = {
-      title: listing._source.address,
-      totalCost: listing._source.totalCost || 0,
-      area: listing._source.area || 0,
-      areaPerThousand: listing._source.areaPerThousand || 0,
-      link: listing.link || '',
-      pictures: listing._source.pictures,
-      pictureCaptions: listing._source.pictureCaptions,
-      rooms: listing._source.bedrooms
-    };
+    this.data = listing;
+  }
+
+  setListing(listing: CommonListing) {
+    switch (listing.class) {
+      case 'zap-listing':
+        this.linkButton = 'Zap Imóveis';
+        break;
+      case 'quinto-listing':
+        this.linkButton = 'Quinto Andar';
+        break;
+    }
+    this.data = listing;
   }
 
   openLink() {

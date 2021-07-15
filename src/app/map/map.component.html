@@ -5,39 +5,21 @@
   (maptypeidChanged)="updateMapOptions()">
   </google-map>
 
-  <div *ngFor="let listing of zapListings"
-  class="listing zap-listing" (click)="onZapListingClick(listing)"
-  [style.top]="getRectTop(listing.listing.address.mapPosition) + 'px'"
-  [style.left]="getRectLeft(listing.listing.address.mapPosition) + 'px'">
+  <div *ngFor="let listing of listings"
+  class="listing" [ngClass]="listing.class" (click)="listingClicked.next(listing)"
+  [style.top]="getRectTop(listing.mapPosition) + 'px'"
+  [style.left]="getRectLeft(listing.mapPosition) + 'px'">
     <div class="counters">
       <div class="counter-element">
-        {{listing.listing.area}}
+        {{listing.area}}
       </div>
       <div class="counter-element">
-        {{listing.listing.areaPerThousand}}
+        {{listing.areaPerThousand}}
       </div>
       <div class="counter-element">
-        {{listing.listing.bedrooms}}
+        {{listing.rooms}}
       </div>
     </div>
-    <span class="price">{{listing.listing.totalCost}}</span>
-  </div>
-
-  <div *ngFor="let listing of quintoListings"
-  class="listing quinto-listing" (click)="onQuintoListingClick(listing)"
-  [style.top]="getRectTop(listing._source.mapPosition) + 'px'"
-  [style.left]="getRectLeft(listing._source.mapPosition) + 'px'">
-    <div class="counters">
-      <div class="counter-element">
-        {{listing._source.area}}
-      </div>
-      <div class="counter-element">
-        {{listing._source.areaPerThousand}}
-      </div>
-      <div class="counter-element">
-        {{listing._source.bedrooms}}
-      </div>
-    </div>
-    <span class="price">{{listing._source.totalCost}}</span>
+    <span class="price">{{listing.totalCost}}</span>
   </div>
 </div>

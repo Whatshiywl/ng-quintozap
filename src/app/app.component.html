@@ -21,10 +21,8 @@
   <mat-drawer-content>
     <app-map
     (boundsChanged)="onBoundsChanged($event)"
-    (zapClicked)="onZapListingClick($event)"
-    (quintoClicked)="onQuintoListingClick($event)"
-    [zapListings]="zapListings"
-    [quintoListings]="quintoListings"
+    (listingClicked)="onListingClicked($event)"
+    [listings]="listings"
     ></app-map>
     <div class="side-toolbar">
       <button mat-raised-button>

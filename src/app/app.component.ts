@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-import { InfoComponent } from './info/info.component';
-import { QuintoHit, QuintoService } from './quinto.service';
-import { ZapListing, ZapService } from './zap.service';
+import { merge, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CommonListing, InfoComponent, ListingResult } from './info/info.component';
+import { QuintoService } from './quinto.service';
+import { ZapService } from './zap.service';
 
 export interface Filter {
   mapParams?: {
@@ -24,8 +25,7 @@ export interface Filter {
 })
 export class AppComponent {
   title = 'ng-quintozap';
-  zapListings!: ZapListing[];
-  quintoListings!: QuintoHit[];
+  listings: CommonListing[] = [];
 
   filterForm: FormGroup;
   autoSearch: FormControl;
@@ -35,8 +35,7 @@ export class AppComponent {
     bounds?: google.maps.LatLngBoundsLiteral
   };
 
-  zapSubs!: Subscription;
-  quintoSubs!: Subscription;
+  listingSubs!: Subscription;
 
   constructor(
     fb: FormBuilder,
@@ -72,6 +71,26 @@ export class AppComponent {
       localStorage.setItem('autoSearch', enabled);
       if (enabled) this.filter();
     });
+
+    merge(
+      this.zapService.listings$,
+      this.quintoService.listings$
+    )
+    .pipe(map(this.filterByPrice.bind(this)))
+    .subscribe(({ origin, results, filter }) => {
+      if (results.length) {
+        console.log('listings', origin, results);
+        this.listings = this.listings
+        .filter(listing => listing.origin !== origin)
+        .concat(results);
+      } else {
+        console.log('retry', origin);
+        setTimeout(() => {
+          const service = origin === 'zap' ? this.zapService : this.quintoService;
+          service.filter(filter);
+        }, 1000);
+      }
+    });
   }
 
   onBoundsChanged(map: google.maps.Map<Element>) {
@@ -82,63 +101,29 @@ export class AppComponent {
   }
 
   filter() {
-    this.filterZap();
-    this.filterQuinto();
-  }
-
-  filterZap() {
     const currentFilter: Filter = {
       mapParams: this.mapParams,
       ...this.filterForm.value
     };
-    this.zapListings = [ ];
-    if (this.zapSubs) this.zapSubs.unsubscribe();
-    this.zapSubs = this.zapService.getZap(currentFilter).subscribe(result => {
-      const filtered = result.filter(el => {
-        const rent = el.listing.totalCost || 0;
+    this.zapService.filter(currentFilter);
+    this.quintoService.filter(currentFilter);
+  }
+
+  filterByPrice(result: ListingResult) {
+    return {
+      origin: result.origin, filter: result.filter,
+      results: result.results.filter(listing => {
+        const rent = listing.totalCost;
         const { minPrice, maxPrice } = this.filterForm.value;
         if (minPrice && rent < minPrice) return false;
         if (maxPrice && rent > maxPrice) return false;
         return true;
-      });
-      console.log(filtered);
-      this.zapListings = this.zapListings.concat(filtered);
-      if (!this.zapListings.length) {
-        setTimeout(this.filterZap.bind(this), 1000);
-      }
-    });
-  }
-
-  filterQuinto() {
-    const currentFilter: Filter = {
-      mapParams: this.mapParams,
-      ...this.filterForm.value
+      })
     };
-    this.quintoListings = [ ];
-    if (this.quintoSubs) this.quintoSubs.unsubscribe();
-    this.quintoSubs = this.quintoService.getZap(currentFilter).subscribe(result => {
-      const filtered = result.filter(el => {
-        const rent = el._source.totalCost;
-        const { minPrice, maxPrice } = this.filterForm.value;
-        if (minPrice && rent < minPrice) return false;
-        if (maxPrice && rent > maxPrice) return false;
-        return true;
-      });
-      console.log(filtered);
-      this.quintoListings = this.quintoListings.concat(filtered);
-      if (!this.quintoListings.length) {
-        setTimeout(this.filterQuinto.bind(this), 1000);
-      }
-    });
   }
 
-  onZapListingClick(listing: ZapListing) {
+  onListingClicked(listing: CommonListing) {
     const ref = this.dialog.open(InfoComponent);
-    ref.componentInstance.setZapListing(listing);
-  }
-
-  onQuintoListingClick(listing: QuintoHit) {
-    const ref = this.dialog.open(InfoComponent);
-    ref.componentInstance.setQuintoHit(listing);
+    ref.componentInstance.setListing(listing);
   }
 }
