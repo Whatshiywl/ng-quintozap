@@ -76,4 +76,9 @@ export class InfoComponent {
     this.clipboard.copy(this.data.link);
     this.snack.open('Link copied to clipboard', 'OK', { duration: 3000 });
   }
+
+  getSlidesPerView() {
+    const w = window.innerWidth;
+    return w < 800 ? 1 : (w < 1200 ? 2 : 3);
+  }
 }
