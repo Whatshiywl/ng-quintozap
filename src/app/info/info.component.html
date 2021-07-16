@@ -3,6 +3,11 @@
   (click)="copyLink()">
     <mat-icon>link</mat-icon>
   </button>
+  <button mat-icon-button
+  (click)="onToggleVisibility()">
+    <mat-icon *ngIf="listing.seen">visibility_outline</mat-icon>
+    <mat-icon *ngIf="!listing.seen">visibility_off_outline</mat-icon>
+  </button>
 </h2>
 <mat-dialog-content class="mat-typography">
   <swiper

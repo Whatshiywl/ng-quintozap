@@ -37,6 +37,8 @@ export class AppComponent {
 
   listingSubs!: Subscription;
 
+  hideSeen = false;
+
   constructor(
     fb: FormBuilder,
     private zapService: ZapService,
@@ -91,6 +93,9 @@ export class AppComponent {
         }, 1000);
       }
     });
+
+    const savedHideSeen = localStorage.getItem('hideSeen') || 'false';
+    this.hideSeen = JSON.parse(savedHideSeen);
   }
 
   onBoundsChanged(map: google.maps.Map<Element>) {
@@ -125,5 +130,11 @@ export class AppComponent {
   onListingClicked(listing: CommonListing) {
     const ref = this.dialog.open(InfoComponent);
     ref.componentInstance.setListing(listing);
+  }
+
+  onToggleHideSeen() {
+    this.hideSeen = !this.hideSeen;
+    const toSave = JSON.stringify(this.hideSeen);
+    localStorage.setItem('hideSeen', toSave);
   }
 }

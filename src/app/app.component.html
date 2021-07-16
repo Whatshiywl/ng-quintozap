@@ -22,11 +22,17 @@
     <app-map
     (boundsChanged)="onBoundsChanged($event)"
     (listingClicked)="onListingClicked($event)"
-    [listings]="listings"
+    [listings]="listings" [hideSeen]="hideSeen"
     ></app-map>
     <div class="side-toolbar">
-      <button mat-raised-button>
-        <mat-icon (click)="filter()">search</mat-icon>
+      <button mat-raised-button
+      (click)="onToggleHideSeen()">
+        <mat-icon *ngIf="hideSeen">visibility_off_outline</mat-icon>
+        <mat-icon *ngIf="!hideSeen">visibility_outline</mat-icon>
+      </button>
+      <button mat-raised-button
+      (click)="filter()">
+        <mat-icon>search</mat-icon>
       </button>
       <button mat-raised-button
       (click)="autoSearch.setValue(!autoSearch.value)">

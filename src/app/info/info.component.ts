@@ -106,4 +106,20 @@ export class InfoComponent {
     const toSave = JSON.stringify(savedFav);
     localStorage.setItem('favorites', toSave);
   }
+
+  onToggleVisibility() {
+    if (!this.listing) return;
+    const newState = !this.listing.seen;
+    this.listing.seen = newState;
+    const savedSeenJson = localStorage.getItem('seen');
+    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    if (newState) {
+      if (!savedSeen.includes(this.listing.id)) savedSeen.push(this.listing.id);
+    } else {
+      const index = savedSeen.findIndex(id => id === this.listing.id);
+      savedSeen.splice(index, 1);
+    }
+    const toSave = JSON.stringify(savedSeen);
+    localStorage.setItem('seen', toSave);
+  }
 }

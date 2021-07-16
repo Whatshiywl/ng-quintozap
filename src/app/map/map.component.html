@@ -6,6 +6,7 @@
   </google-map>
 
   <div *ngFor="let listing of listings"
+  [style.visibility]="(hideSeen && listing.seen) ? 'hidden' : 'visible'"
   matBadge="&#8288;" matBadgeSize="small" [matBadgeHidden]="listing.seen" matBadgeColor="warn"
   class="listing" [ngClass]="listing.class + (listing.favorite ? ' favorite' : '')" (click)="onListingClicked(listing)"
   [style.top]="getRectTop(listing.mapPosition) + 'px'"

@@ -13,6 +13,7 @@ import { CommonListing } from "../info/info.component";
 })
 export class MapComponent {
   @Input() listings!: CommonListing[];
+  @Input() hideSeen = false;
   @Output() boundsChanged: EventEmitter<google.maps.Map<Element>> = new EventEmitter<google.maps.Map<Element>>();
   @Output() listingClicked: EventEmitter<CommonListing> = new EventEmitter<CommonListing>();
   @ViewChild(GoogleMap) gMap!: GoogleMap;
