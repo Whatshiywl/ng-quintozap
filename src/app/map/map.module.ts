@@ -5,6 +5,8 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import { MapComponent } from './map.component';
 
+import { MatBadgeModule } from '@angular/material/badge';
+
 @NgModule({
   declarations: [
     MapComponent,
@@ -14,6 +16,7 @@ import { MapComponent } from './map.component';
     GoogleMapsModule,
     HttpClientModule,
     HttpClientJsonpModule,
+    MatBadgeModule
   ],
   exports: [
     MapComponent,

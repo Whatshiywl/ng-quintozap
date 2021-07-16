@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subject } from "rxjs";
 import { map, catchError, debounceTime, tap } from "rxjs/operators";
@@ -29,7 +29,10 @@ export class MapComponent {
 
   wrapperBounds!: { width: number, height: number };
 
-  constructor(httpClient: HttpClient) {
+  constructor(
+    httpClient: HttpClient,
+    private cd: ChangeDetectorRef
+  ) {
     const mapsKeyApi = `${environment.apiPrefix}/api/googlemapsapikey`;
     httpClient.get(`${location.origin}${mapsKeyApi}`, { responseType: 'text' }).subscribe(key => {
       this.apiLoaded = httpClient.jsonp(`https://maps.googleapis.com/maps/api/js?key=${key}`, 'callback')
@@ -63,6 +66,18 @@ export class MapComponent {
 
   onMapLoaded() {
     console.log('map loaded', this.gMap);
+  }
+
+  onListingClicked(listing: CommonListing) {
+    this.listingClicked.next(listing);
+    if (listing.seen) return;
+    listing.seen = true;
+    const savedSeenJson = localStorage.getItem('seen');
+    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    if (savedSeen.includes(listing.id)) return;
+    savedSeen.push(listing.id);
+    const toSave = JSON.stringify(savedSeen);
+    localStorage.setItem('seen', toSave);
   }
 
   onBoundsChanged() {

@@ -96,7 +96,7 @@ export class QuintoService {
       map(results => {
         return {
           origin: this.origin,
-          results: results.map(this.toCommonListing.bind(this)),
+          results: this.toCommonListings(results),
           filter: quintoFilter
         } as ListingResult;
       })
@@ -127,31 +127,40 @@ export class QuintoService {
     return body;
   }
 
-  private toCommonListing(result: QuintoHit) {
-    const areaPerThousand = Math.round(result._source.area * 1000 / result._source.totalCost);
-    const pictures = result._source.imageList
-    .map(image => {
-      return `https://www.quintoandar.com.br/img/xxl/${image}`;
+  private toCommonListings(results: QuintoHit[]) {
+    const savedSeenJson = localStorage.getItem('seen');
+    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    const savedFavJson = localStorage.getItem('favorites');
+    const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
+    return results.map(result => {
+      const id = `${this.origin}-${result._id}`;
+      const areaPerThousand = Math.round(result._source.area * 1000 / result._source.totalCost);
+      const pictures = result._source.imageList
+      .map(image => {
+        return `https://www.quintoandar.com.br/img/xxl/${image}`;
+      });
+      const pictureCaptions = [ ...result._source.imageCaptionList ];
+      const mapped: CommonListing = {
+        class: 'quinto-listing',
+        origin: this.origin,
+        id,
+        title: result._source.address,
+        totalCost: result._source.totalCost,
+        area: result._source.area,
+        areaPerThousand,
+        link: `https://www.quintoandar.com.br/imovel/${result._id}`,
+        pictures,
+        pictureCaptions,
+        rooms: result._source.bedrooms,
+        mapPosition: {
+          lat: result._source.location.lat,
+          lng: result._source.location.lon
+        },
+        seen: savedSeen.includes(id),
+        favorite: savedFav.includes(id)
+      };
+      return mapped;
     });
-    const pictureCaptions = [ ...result._source.imageCaptionList ];
-    const mapped: CommonListing = {
-      class: 'quinto-listing',
-      origin: this.origin,
-      id: result._id,
-      title: result._source.address,
-      totalCost: result._source.totalCost,
-      area: result._source.area,
-      areaPerThousand,
-      link: `https://www.quintoandar.com.br/imovel/${result._id}`,
-      pictures,
-      pictureCaptions,
-      rooms: result._source.bedrooms,
-      mapPosition: {
-        lat: result._source.location.lat,
-        lng: result._source.location.lon
-      }
-    };
-    return mapped;
   }
 
 }

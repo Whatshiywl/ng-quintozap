@@ -145,7 +145,7 @@ export class ZapService {
       map(results => {
         return {
           origin: this.origin,
-          results: results.map(this.toCommonListing.bind(this)),
+          results: this.toCommonListings(results),
           filter: zapFilter
         } as ListingResult;
       })
@@ -193,35 +193,44 @@ export class ZapService {
     return Math.round(rent);
   }
 
-  private toCommonListing(result: ZapListing) {
-    const area = +result.listing.totalAreas[0] || +result.listing.usableAreas[0];
-    const totalCost = this.getFullListingPrice(result);
-    const areaPerThousand = Math.round(area * 1000 / totalCost);
-    const pictures = result.medias
-    .filter(media => media.type === 'IMAGE')
-    .map(media => {
-      return media.url
-      .replace('{action}', 'fit-in')
-      .replace('{width}', '800')
-      .replace('{height}', '360');
+  private toCommonListings(results: ZapListing[]) {
+    const savedSeenJson = localStorage.getItem('seen');
+    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    const savedFavJson = localStorage.getItem('favorites');
+    const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
+    return results.map(result => {
+      const id = `${this.origin}-${result.listing.id}`;
+      const area = +result.listing.usableAreas[0];
+      const totalCost = this.getFullListingPrice(result);
+      const areaPerThousand = Math.round(area * 1000 / totalCost);
+      const pictures = result.medias
+      .filter(media => media.type === 'IMAGE')
+      .map(media => {
+        return media.url
+        .replace('{action}', 'fit-in')
+        .replace('{width}', '800')
+        .replace('{height}', '360');
+      });
+      const mapped: CommonListing = {
+        class: 'zap-listing',
+        origin: this.origin,
+        id,
+        title: result.listing.title,
+        totalCost,
+        area,
+        areaPerThousand,
+        link: `https://www.zapimoveis.com.br${result.link.href}`,
+        pictures,
+        pictureCaptions: [ ],
+        rooms: result.listing.bedrooms[0],
+        mapPosition: {
+          lat: result.listing.address.point.lat,
+          lng: result.listing.address.point.lon
+        },
+        seen: savedSeen.includes(id),
+        favorite: savedFav.includes(id)
+      };
+      return mapped;
     });
-    const mapped: CommonListing = {
-      class: 'zap-listing',
-      origin: this.origin,
-      id: result.listing.id,
-      title: result.listing.title,
-      totalCost,
-      area,
-      areaPerThousand,
-      link: `https://www.zapimoveis.com.br${result.link.href}`,
-      pictures,
-      pictureCaptions: [ ],
-      rooms: result.listing.bedrooms[0],
-      mapPosition: {
-        lat: result.listing.address.point.lat,
-        lng: result.listing.address.point.lon
-      }
-    };
-    return mapped;
   }
 }

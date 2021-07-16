@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{data?.title}}
+<h2 mat-dialog-title>{{listing.title}}
   <button mat-icon-button
   (click)="copyLink()">
     <mat-icon>link</mat-icon>
@@ -12,18 +12,25 @@
     [keyboard]="true"
     [mousewheel]="{ sensitivity: 1 }"
     [observeParents]="true">
-    <ng-template *ngFor="let picture of data?.pictures" swiperSlide>
+    <ng-template *ngFor="let picture of listing.pictures" swiperSlide>
       <img [src]="picture" alt="" class="slide-image">
     </ng-template>
   </swiper>
   <mat-chip-list [selectable]="false">
-    <mat-chip disableRipple [selected]="false">${{data?.totalCost}}</mat-chip>
-    <mat-chip disableRipple>{{data?.area}} m²</mat-chip>
-    <mat-chip disableRipple>{{data?.rooms}} rooms</mat-chip>
+    <mat-chip disableRipple [selected]="false">${{listing.totalCost}}</mat-chip>
+    <mat-chip disableRipple>{{listing.area}} m²</mat-chip>
+    <mat-chip disableRipple>{{listing.rooms}} rooms</mat-chip>
   </mat-chip-list>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Close</button>
-  <button mat-button [mat-dialog-close]="false" cdkFocusInitial
-  (click)="openLink()">{{linkButton}}</button>
+  <button mat-button cdkFocusInitial
+  (click)="openLink()">
+    {{linkButton}}
+  </button>
+  <button mat-button cdkFocusInitial
+  (click)="onFavorite()">
+    <mat-icon *ngIf="!listing.favorite">favorite_border</mat-icon>
+    <mat-icon *ngIf="listing.favorite" color="warn">favorite</mat-icon>
+  </button>
 </mat-dialog-actions>

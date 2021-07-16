@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .map-wrapper {
   height: 100%;
   width: 100%;
@@ -8,6 +10,9 @@
     height: 100%;
   }
 }
+
+$zapColor: #008295;
+$quintoColor: #5063f0;
 
 .listing {
   position: absolute;
@@ -23,11 +28,24 @@
   opacity: 0.9;
 
   &.zap-listing {
-    background-color: #008295;
+    background-color: $zapColor;
   }
 
   &.quinto-listing {
-    background-color: #5063f0;
+    background-color: $quintoColor;
+  }
+
+  &.favorite {
+    opacity: 1;
+    color: black;
+
+    &.zap-listing {
+      background-color: color.scale(gold, $lightness: -20%);
+    }
+
+    &.quinto-listing {
+      background-color: color.scale(gold, $lightness: -20%);
+    }
   }
 
   &:hover {

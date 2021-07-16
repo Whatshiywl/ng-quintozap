@@ -24,7 +24,9 @@ export interface CommonListing {
   pictures: string[],
   pictureCaptions: string[],
   rooms: number,
-  mapPosition: google.maps.LatLngLiteral
+  mapPosition: google.maps.LatLngLiteral,
+  seen: boolean,
+  favorite: boolean
 }
 
 export interface ListingResult {
@@ -42,20 +44,9 @@ SwiperCore.use([Keyboard, Mousewheel]);
   styleUrls: ['./info.component.scss']
 })
 export class InfoComponent {
-  zapListing!: ZapListing;
-  quintoHit!: QuintoHit;
   linkButton!: 'Zap Imóveis' | 'Quinto Andar';
 
-  data?: {
-    title: string,
-    totalCost: number
-    area: number,
-    areaPerThousand: number,
-    link: string,
-    pictures: string[],
-    pictureCaptions: string[],
-    rooms: number
-  };
+  listing!: CommonListing;
 
   constructor(
     private clipboard: Clipboard,
@@ -64,12 +55,12 @@ export class InfoComponent {
 
   setZapListing(listing: CommonListing) {
     this.linkButton = 'Zap Imóveis';
-    this.data = listing;
+    this.listing = listing;
   }
 
   setQuintoHit(listing: CommonListing) {
     this.linkButton = 'Quinto Andar';
-    this.data = listing;
+    this.listing = listing;
   }
 
   setListing(listing: CommonListing) {
@@ -81,22 +72,38 @@ export class InfoComponent {
         this.linkButton = 'Quinto Andar';
         break;
     }
-    this.data = listing;
+    this.listing = listing;
   }
 
   openLink() {
-    if (!this.data) return;
-    window.open(this.data.link);
+    if (!this.listing) return;
+    window.open(this.listing.link);
   }
 
   copyLink() {
-    if (!this.data) return;
-    this.clipboard.copy(this.data.link);
+    if (!this.listing) return;
+    this.clipboard.copy(this.listing.link);
     this.snack.open('Link copied to clipboard', 'OK', { duration: 3000 });
   }
 
   getSlidesPerView() {
     const w = window.innerWidth;
     return w < 800 ? 1 : (w < 1200 ? 2 : 3);
+  }
+
+  onFavorite() {
+    if (!this.listing) return;
+    const newState = !this.listing.favorite;
+    this.listing.favorite = newState;
+    const savedFavJson = localStorage.getItem('favorites');
+    const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
+    if (newState) {
+      if (!savedFav.includes(this.listing.id)) savedFav.push(this.listing.id);
+    } else {
+      const index = savedFav.findIndex(id => id === this.listing.id);
+      savedFav.splice(index, 1);
+    }
+    const toSave = JSON.stringify(savedFav);
+    localStorage.setItem('favorites', toSave);
   }
 }
