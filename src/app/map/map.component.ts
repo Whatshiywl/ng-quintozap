@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subject } from "rxjs";
 import { map, catchError, debounceTime, tap } from "rxjs/operators";
@@ -11,7 +11,7 @@ import { CommonListing } from "../info/info.component";
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent {
+export class MapComponent implements OnChanges {
   @Input() listings!: CommonListing[];
   @Input() hideSeen = false;
   @Output() boundsChanged: EventEmitter<google.maps.Map<Element>> = new EventEmitter<google.maps.Map<Element>>();
@@ -29,6 +29,13 @@ export class MapComponent {
   boundsChangedSubject: Subject<void> = new Subject<void>();
 
   wrapperBounds!: { width: number, height: number };
+
+  positions: {
+    [key: string]: {
+      position: google.maps.LatLngLiteral,
+      listings: CommonListing[]
+    }
+  } = { };
 
   constructor(
     httpClient: HttpClient,
@@ -69,16 +76,24 @@ export class MapComponent {
     console.log('map loaded', this.gMap);
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.listings) {
+      this.positions = { };
+      this.listings.forEach(listing => {
+        const position = listing.mapPosition;
+        const { lat, lng } = position;
+        const hash = `${lat}|${lng}`;
+        if (!this.positions[hash]) this.positions[hash] = {
+          position,
+          listings: [ ]
+        };
+        this.positions[hash].listings.push(listing);
+      });
+    }
+  }
+
   onListingClicked(listing: CommonListing) {
     this.listingClicked.next(listing);
-    if (listing.seen) return;
-    listing.seen = true;
-    const savedSeenJson = localStorage.getItem('seen');
-    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
-    if (savedSeen.includes(listing.id)) return;
-    savedSeen.push(listing.id);
-    const toSave = JSON.stringify(savedSeen);
-    localStorage.setItem('seen', toSave);
   }
 
   onBoundsChanged() {

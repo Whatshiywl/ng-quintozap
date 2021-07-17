@@ -1,0 +1,28 @@
+<div *ngIf="listing" class="listings">
+  <mat-icon class="pagination-btn prev-btn unselectable" color="accent"
+  [style.visibility]="showPrevBtn ? 'visible' : 'hidden'"
+  (click)="onPrev()">
+    label_important
+  </mat-icon>
+  <mat-icon class="pagination-btn next-btn unselectable" color="accent"
+  [style.visibility]="showNextBtn ? 'visible' : 'hidden'"
+  (click)="onNext()">
+    label_important
+  </mat-icon>
+  <div [style.visibility]="(hideSeen && listing.seen && !listing.favorite) ? 'hidden' : 'visible'"
+  matBadge="&#8288;" matBadgeSize="small" [matBadgeHidden]="listing.seen" matBadgeColor="warn"
+  class="listing unselectable" [ngClass]="listing.class + (listing.favorite ? ' favorite' : '')" (click)="onListingClicked(listing)">
+    <div class="counters">
+      <div class="counter-element">
+        {{listing.area}}
+      </div>
+      <div class="counter-element">
+        {{listing.areaPerThousand}}
+      </div>
+      <div class="counter-element">
+        {{listing.rooms}}
+      </div>
+    </div>
+    <span class="price">{{listing.totalCost}}</span>
+  </div>
+</div>

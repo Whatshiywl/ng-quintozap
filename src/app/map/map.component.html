@@ -4,24 +4,13 @@
   (boundsChanged)="boundsChangedSubject.next()"
   (maptypeidChanged)="updateMapOptions()">
   </google-map>
-
-  <div *ngFor="let listing of listings"
-  [style.visibility]="(hideSeen && listing.seen && !listing.favorite) ? 'hidden' : 'visible'"
-  matBadge="&#8288;" matBadgeSize="small" [matBadgeHidden]="listing.seen" matBadgeColor="warn"
-  class="listing" [ngClass]="listing.class + (listing.favorite ? ' favorite' : '')" (click)="onListingClicked(listing)"
-  [style.top]="getRectTop(listing.mapPosition) + 'px'"
-  [style.left]="getRectLeft(listing.mapPosition) + 'px'">
-    <div class="counters">
-      <div class="counter-element">
-        {{listing.area}}
-      </div>
-      <div class="counter-element">
-        {{listing.areaPerThousand}}
-      </div>
-      <div class="counter-element">
-        {{listing.rooms}}
-      </div>
-    </div>
-    <span class="price">{{listing.totalCost}}</span>
-  </div>
 </div>
+
+<app-listings *ngFor="let item of positions | keyvalue"
+[listings]="item.value.listings"
+[hideSeen]="hideSeen"
+(listingClicked)="onListingClicked($event)"
+style="position: absolute;"
+[style.top]="getRectTop(item.value.position) + 'px'"
+[style.left]="getRectLeft(item.value.position) + 'px'">
+</app-listings>
