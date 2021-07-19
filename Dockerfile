@@ -1,4 +1,4 @@
-FROM whatshiywl/angular-builder:1.0.0 AS build
+FROM whatshiywl/angular-base:1.0.0 AS build
 
 WORKDIR /prod
 COPY package.json .
