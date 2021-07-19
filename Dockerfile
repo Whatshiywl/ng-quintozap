@@ -1,4 +1,4 @@
-FROM whatshiywl/angularbuilder:1.0.0 AS build
+FROM whatshiywl/angular-builder:1.0.0 AS build
 
 WORKDIR /prod
 COPY package.json .
@@ -10,7 +10,7 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm i
 COPY . .
-RUN node node_modules/.bin/ng build --aot
+RUN node node_modules/.bin/ng build --aot --basehref /quintozap/
 
 FROM node:16-slim
 WORKDIR /app

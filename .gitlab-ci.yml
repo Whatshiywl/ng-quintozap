@@ -11,12 +11,14 @@ stages:
 
 docker-build:
   stage: build
-  image: docker
+  image: whatshiywl/gcp-node-builder:1.0.0
   services:
     - docker:dind
   before_script:
     - docker info
   script:
+    - mv /build/build.sh $CI_PROJECT_DIR
+    - mv /build/get-version.sh $CI_PROJECT_DIR
     - ./build.sh
   artifacts:
     reports:
@@ -26,8 +28,8 @@ docker-build:
 
 cloud-deploy:
   stage: deploy
-  image: google/cloud-sdk
+  image: whatshiywl/gcp-node-deployer:1.0.0
   script:
-    - ./deploy.sh
+    - deploy.sh
   dependencies:
     - docker-build
