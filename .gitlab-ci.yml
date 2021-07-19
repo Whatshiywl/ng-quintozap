@@ -30,6 +30,6 @@ cloud-deploy:
   stage: deploy
   image: whatshiywl/gcp-node-deployer:1.0.0
   script:
-    - deploy.sh
+    - deploy
   dependencies:
     - docker-build
