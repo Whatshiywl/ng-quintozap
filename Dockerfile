@@ -10,7 +10,7 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm i
 COPY . .
-RUN node node_modules/.bin/ng build --aot --base-href /quintozap/
+RUN npm run build
 
 FROM node:16-slim
 WORKDIR /app

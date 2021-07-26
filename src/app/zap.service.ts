@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { first, map, takeWhile } from "rxjs/operators";
-import { environment } from "src/environments/environment";
 import { Filter } from "./app.component";
 import { CommonListing, ListingOrigin, ListingResult } from "./info/info.component";
 
@@ -112,7 +111,7 @@ export interface ZapListing {
 
 @Injectable()
 export class ZapService {
-  private zapApi = `${environment.apiPrefix}/api/zap`;
+  private zapApi = `api/zap`;
   readonly listings$: Subject<ListingResult> = new Subject<ListingResult>();
   private origin: ListingOrigin = 'zap';
 
@@ -153,7 +152,7 @@ export class ZapService {
   }
 
   private getFromApi(zapFilter: Filter) {
-    const path = `${location.origin}${this.zapApi}`;
+    const path = `${this.zapApi}`;
     return this.client.get<{
       search: {
         result: { listings: ZapListing[], totalCount: number }

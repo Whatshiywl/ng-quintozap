@@ -2,7 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { first, map, takeWhile } from "rxjs/operators";
-import { environment } from "src/environments/environment";
 import { Filter } from "./app.component";
 import { CommonListing, ListingOrigin, ListingResult } from "./info/info.component";
 
@@ -66,7 +65,7 @@ export interface QuintoResult {
 
 @Injectable()
 export class QuintoService {
-  private quintoApi = `${environment.apiPrefix}/api/quinto`;
+  private quintoApi = `api/quinto`;
   readonly listings$: Subject<ListingResult> = new Subject<ListingResult>();
   private origin: ListingOrigin = 'quinto'
 
@@ -104,7 +103,7 @@ export class QuintoService {
   }
 
   private getFromApi(quintoFilter: Filter) {
-    const path = `${location.origin}${this.quintoApi}`;
+    const path = `${this.quintoApi}`;
     return this.client.post<QuintoResult>(path, this.getBody(quintoFilter))
     .pipe(
       map(data => {

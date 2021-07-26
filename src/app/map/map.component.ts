@@ -1,9 +1,8 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subject } from "rxjs";
 import { map, catchError, debounceTime, tap } from "rxjs/operators";
 import { GoogleMap } from "@angular/google-maps";
-import { environment } from "src/environments/environment";
 import { CommonListing } from "../info/info.component";
 
 @Component({
@@ -38,11 +37,10 @@ export class MapComponent implements OnChanges {
   } = { };
 
   constructor(
-    httpClient: HttpClient,
-    private cd: ChangeDetectorRef
+    httpClient: HttpClient
   ) {
-    const mapsKeyApi = `${environment.apiPrefix}/api/googlemapsapikey`;
-    httpClient.get(`${location.origin}${mapsKeyApi}`, { responseType: 'text' }).subscribe(key => {
+    const mapsKeyApi = `api/googlemapsapikey`;
+    httpClient.get(`${mapsKeyApi}`, { responseType: 'text' }).subscribe(key => {
       this.apiLoaded = httpClient.jsonp(`https://maps.googleapis.com/maps/api/js?key=${key}`, 'callback')
         .pipe(
           map(() => true),
