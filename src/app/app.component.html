@@ -1,4 +1,4 @@
-<mat-drawer-container class="example-container" hasBackdrop="false">
+<mat-drawer-container class="drawer-container" hasBackdrop="false">
   <mat-drawer #drawer mode="over" position="end">
     <div class="form-wrapper">
       <form class="filter-form" [formGroup]="filterForm">
@@ -26,9 +26,8 @@
     ></app-map>
     <div class="side-toolbar">
       <button mat-raised-button
-      (click)="onToggleHideSeen()">
-        <mat-icon *ngIf="hideSeen">visibility_off_outline</mat-icon>
-        <mat-icon *ngIf="!hideSeen">visibility_outline</mat-icon>
+      (click)="drawer.toggle()">
+        <mat-icon>filter_list</mat-icon>
       </button>
       <button mat-raised-button
       (click)="filter()">
@@ -40,8 +39,9 @@
         <mat-icon *ngIf="!autoSearch.value">search_off</mat-icon>
       </button>
       <button mat-raised-button
-      (click)="drawer.toggle()">
-        <mat-icon>filter_list</mat-icon>
+      (click)="onToggleHideSeen()">
+        <mat-icon *ngIf="hideSeen">visibility_off_outline</mat-icon>
+        <mat-icon *ngIf="!hideSeen">visibility_outline</mat-icon>
       </button>
     </div>
   </mat-drawer-content>
