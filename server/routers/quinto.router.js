@@ -22,7 +22,7 @@ router.get('/:id', (req, res) => {
   .then(result => result.text())
   .then(data => {
     const [ , firstPublicationDate ] = data.match(/firstPublicationDate:\s?"([^"]*)"/) || [ ];
-    const [ , lastPublicationDate ] = data.match(/lastPublicationDate:\s?"([^"]*)"/) || [ ];
+    const [ , lastPublicationDate ] = data.match(/lastPublishedDate:\s?"([^"]*)"/) || [ ];
     const response = {
       firstPublicationDate,
       lastPublicationDate
