@@ -1,58 +1,76 @@
-.drawer-container {
-  width: 100%;
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 
-  mat-drawer {
+  mat-toolbar {
+    height: 50px;
 
-    .form-wrapper {
-      height: 100%;
-      padding: 5px;
-      box-sizing: border-box;
+    a {
+      color: white;
+      text-decoration: none;
+    }
 
-      .filter-form {
-        display: flex;
-        flex-direction: column;
+    .toolbar-spacer {
+      flex: 1 1 auto;
+    }
+  }
+
+  .drawer-container {
+    flex: 1 1 auto;
+
+    mat-drawer {
+
+      .form-wrapper {
         height: 100%;
+        padding: 5px;
+        box-sizing: border-box;
 
-        .apply-filter-button {
-          height: 30px;
-        }
-
-        .price-form {
+        .filter-form {
           display: flex;
           flex-direction: column;
+          height: 100%;
 
-          .price-form-inputs {
+          .apply-filter-button {
+            height: 30px;
+          }
+
+          .price-form {
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
 
-            mat-form-field {
-              width: calc(50% - 5px);
+            .price-form-inputs {
+              display: flex;
+              justify-content: space-around;
+
+              mat-form-field {
+                width: calc(50% - 5px);
+              }
             }
           }
         }
       }
     }
-  }
 
-  mat-drawer-content {
-    overflow: hidden;
+    mat-drawer-content {
+      overflow: hidden;
 
-    .side-toolbar {
-      position: absolute;
-      right: 10px;
-      top: calc(50% - 100px);
-      height: 300px;
-      width: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: space-between;
+      .side-toolbar {
+        position: absolute;
+        right: 10px;
+        bottom: 200px;
+        height: 150px;
+        width: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: space-between;
 
-      button {
-        height: 24%;
-        min-width: 0;
-        padding: 0;
+        button {
+          height: 32%;
+          min-width: 0;
+          padding: 0;
+        }
       }
     }
   }

@@ -10,6 +10,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -37,6 +38,7 @@ import { StorageService } from './storage.service';
     MatFormFieldModule,
     MatIconModule,
     MatDialogModule,
+    MatToolbarModule,
     SwiperModule,
     MatChipsModule,
     ClipboardModule,
