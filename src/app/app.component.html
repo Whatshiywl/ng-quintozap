@@ -10,9 +10,10 @@
   <mat-drawer-container class="drawer-container" hasBackdrop="false">
     <mat-drawer class="drawer"
     #drawer mode="over" position="end">
+      <homaxi-auth></homaxi-auth>
       <div class="form-wrapper">
         <form class="filter-form" [formGroup]="filterForm">
-          <button mat-raised-button class="apply-filter-button" (click)="drawer.toggle() && filter()">Filter</button>
+          <button mat-raised-button color="primary" class="apply-filter-button" (click)="drawer.toggle() && filter()">Filter</button>
           <div class="price-form">
             <div class="price-form-inputs">
               <mat-form-field appearance="outline">
