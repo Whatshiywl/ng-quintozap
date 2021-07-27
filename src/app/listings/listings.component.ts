@@ -1,6 +1,10 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { GoogleMap } from "@angular/google-maps";
 import { CommonListing } from "../info/info.component";
+
+export interface ListingOptions {
+  width: number,
+  height: number
+}
 
 @Component({
   selector: 'app-listings',
@@ -9,6 +13,7 @@ import { CommonListing } from "../info/info.component";
 })
 export class ListingsComponent {
   @Input() listings: CommonListing[] = [ ];
+  @Input() options: ListingOptions = { width: 60, height: 40 };
   @Input() hideSeen = false;
   @Output() listingClicked: EventEmitter<CommonListing> = new EventEmitter<CommonListing>();
   private _index = 0;

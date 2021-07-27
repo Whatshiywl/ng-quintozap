@@ -4,6 +4,7 @@ import { Observable, of, Subject } from "rxjs";
 import { map, catchError, debounceTime, tap } from "rxjs/operators";
 import { GoogleMap } from "@angular/google-maps";
 import { CommonListing } from "../info/info.component";
+import { ListingOptions } from "../listings/listings.component";
 
 @Component({
   selector: 'app-map',
@@ -35,6 +36,11 @@ export class MapComponent implements OnChanges {
       listings: CommonListing[]
     }
   } = { };
+
+  listingOptions: ListingOptions = {
+    width: 60,
+    height: 40
+  };
 
   constructor(
     httpClient: HttpClient
@@ -125,7 +131,7 @@ export class MapComponent implements OnChanges {
     const { width } = this.wrapperBounds;
     const mapWidth = mapBounds.east - mapBounds.west;
     const left = (position.lng - mapBounds.west) * width / mapWidth;
-    return left;
+    return left - (0.5 * this.listingOptions.width);
   }
 
   getRectTop(position?: google.maps.LatLngLiteral) {
@@ -135,6 +141,6 @@ export class MapComponent implements OnChanges {
     const { height } = this.wrapperBounds;
     const mapHeight = mapBounds.south - mapBounds.north;
     const top = (position.lat - mapBounds.north) * height / mapHeight;
-    return top;
+    return top - (0.5 * this.listingOptions.height);
   }
 }

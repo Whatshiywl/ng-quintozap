@@ -10,6 +10,7 @@
     label_important
   </mat-icon>
   <div [style.visibility]="(hideSeen && listing.seen && !listing.favorite) ? 'hidden' : 'visible'"
+  [style.width.px]="options.width" [style.height.px]="options.height"
   matBadge="&#8288;" matBadgeSize="small" [matBadgeHidden]="listing.seen" matBadgeColor="warn"
   class="listing unselectable" [ngClass]="listing.class + (listing.favorite ? ' favorite' : '')" (click)="onListingClicked(listing)">
     <div class="section">

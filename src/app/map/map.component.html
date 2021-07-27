@@ -11,6 +11,6 @@
 [hideSeen]="hideSeen"
 (listingClicked)="onListingClicked($event)"
 style="position: absolute;"
-[style.top]="getRectTop(item.value.position) + 'px'"
-[style.left]="getRectLeft(item.value.position) + 'px'">
+[style.top.px]="getRectTop(item.value.position)"
+[style.left.px]="getRectLeft(item.value.position)">
 </app-listings>
