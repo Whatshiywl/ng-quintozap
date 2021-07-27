@@ -8,7 +8,8 @@
     </button>
   </mat-toolbar>
   <mat-drawer-container class="drawer-container" hasBackdrop="false">
-    <mat-drawer #drawer mode="over" position="end">
+    <mat-drawer class="drawer"
+    #drawer mode="over" position="end">
       <div class="form-wrapper">
         <form class="filter-form" [formGroup]="filterForm">
           <button mat-raised-button class="apply-filter-button" (click)="drawer.toggle() && filter()">Filter</button>

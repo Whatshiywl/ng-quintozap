@@ -21,6 +21,7 @@ import { QuintoService } from './quinto.service';
 import { InfoComponent } from './info/info.component';
 import { SwiperModule } from 'swiper/angular';
 import { StorageService } from './storage.service';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { StorageService } from './storage.service';
     MatChipsModule,
     ClipboardModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    AuthModule
   ],
   providers: [
     ZapService,

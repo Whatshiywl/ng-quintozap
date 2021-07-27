@@ -1,0 +1,36 @@
+.account-wrapper {
+
+  .signin-options {
+    display: flex;
+    flex-direction: column;
+
+    >button {
+      flex-grow: 1;
+      margin: 5px 0;
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        height: 18px;
+        width: 18px;
+        margin-right: 24px;
+      }
+
+      span {
+        margin-top: 1px;
+      }
+    }
+
+    >span {
+      font-size: smaller;
+
+      &.span-link {
+        color: #00E;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
+}

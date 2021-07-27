@@ -1,0 +1,40 @@
+<mat-card *ngIf="user" class="account-wrapper">
+  <mat-card-header>
+    <mat-card-title>{{user.displayName || user.email}}</mat-card-title>
+  </mat-card-header>
+  <div class="signin-options">
+    <button mat-flat-button color="primary" (click)="onLogout()">Logout</button>
+  </div>
+</mat-card>
+<mat-card *ngIf="!user" class="account-wrapper">
+  <mat-card-header>
+    <mat-card-subtitle *ngIf="errorMessage">{{errorMessage}}</mat-card-subtitle>
+  </mat-card-header>
+  <form class="signin-options" [formGroup]="credentialForm">
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Email</mat-label>
+      <input formControlName="email" placeholder="example@email.com" matInput type="email" autocomplete="email">
+      <mat-error *ngIf="!credentialForm.get('email')?.valid">{{getEmailError()}}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="example-full-width" appearance="fill">
+      <mat-label>Password</mat-label>
+      <input formControlName="password" matInput [type]="hidePassword ? 'password' : 'text'" [autocomplete]="signup ? 'new-password' : 'current-password'">
+      <mat-error *ngIf="!credentialForm.get('password')?.valid">{{getPasswordError()}}</mat-error>
+      <mat-icon matSuffix (click)="hidePassword= !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </mat-form-field>
+    <span *ngIf="!signup && !passwordResetSent" class="span-link" (click)="onForgotPassword()">Forgot my password</span>
+    <span *ngIf="!signup && passwordResetSent">Reset link sent to your email</span>
+    <mat-form-field *ngIf="signup" class="example-full-width" appearance="fill">
+      <mat-label>Confirm password</mat-label>
+      <input formControlName="confirmPassword" matInput [type]="hidePassword ? 'password' : 'text'" autocomplete="new-password">
+      <mat-error *ngIf="signup && !credentialForm.get('confirmPassword')?.valid">{{getConfirmPasswordError()}}</mat-error>
+      <mat-icon matSuffix (click)="hidePassword= !hidePassword">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </mat-form-field>
+    <button mat-flat-button color="primary" type="button" (click)="onSignup()">Signup</button>
+    <button mat-stroked-button color="primary" type="submit" (click)="onLogin()">Login</button>
+    <button mat-stroked-button color="primary" type="submit" (click)="onGoogle()">
+      <img src="https://developers.google.com/identity/images/g-logo.png">
+      <span>Sign in with Google</span>
+    </button>
+  </form>
+</mat-card>
