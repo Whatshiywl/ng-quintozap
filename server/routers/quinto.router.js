@@ -1,50 +1,36 @@
 const fetch = require('node-fetch');
 const router = require('express').Router();
 
-router.get('/', (req, res) => {
-  const params = getParams(req.query);
-  const paramsString = toQueryString(params);
-  const quintoZap = 'https://www.quintoandar.com.br/api/yellow-pages/v2/search';
+router.get('/:id', (req, res) => {
+  const id = req.params?.id;
+  if (!id) {
+    return res.status(400).send('No ID parameter provided');
+  }
+  const quintoZap = 'https://www.quintoandar.com.br/imovel';
 
-  fetch(`${quintoZap}?${paramsString}`, {
+  fetch(`${quintoZap}/${id}`, {
     "headers": {
-      "sec-ch-ua": "\" Not;A Brand\";v=\"99\", \"Google Chrome\";v=\"91\", \"Chromium\";v=\"91\"",
+      "sec-ch-ua": "\"Chromium\";v=\"92\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"92\"",
       "sec-ch-ua-mobile": "?0",
-      "x-instana-l": "1,correlationType=web;correlationId=f7714ed1e47eecf6",
-      "x-instana-s": "f7714ed1e47eecf6",
-      "x-instana-t": "f7714ed1e47eecf6"
+      "upgrade-insecure-requests": "1"
     },
-    "referrer": "",
-    "referrerPolicy": "no-referrer",
+    "referrerPolicy": "strict-origin-when-cross-origin",
     "body": null,
     "method": "GET",
     "mode": "cors"
-  });
+  })
+  .then(result => result.text())
+  .then(data => {
+    const [ , firstPublicationDate ] = data.match(/firstPublicationDate:\s?"([^"]*)"/) || [ ];
+    const [ , lastPublicationDate ] = data.match(/lastPublicationDate:\s?"([^"]*)"/) || [ ];
+    const response = {
+      firstPublicationDate,
+      lastPublicationDate
+    };
+    res.json(response);
+  })
+  .catch(err => console.error(err));
 });
-
-function getParams(filter) {
-  const {
-    minPrice, maxPrice,
-    size, from, page
-  } = filter;
-  return {
-    'map[bounds_north]': -23,
-    'map[bounds_south]': -23.01,
-    'map[bounds_east]': -43.35,
-    'map[bounds_west]': -43.36,
-    'cost[cost_type]': 'total_cost',
-    'cost[max_value]': 4600,
-    'cost[min_value]': 700,
-    'availability': 'any',
-    'occupancy': 'any',
-    'business_context': 'RENT',
-    'return': 'location'
-  }
-}
-
-function toQueryString(params) {
-  return Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
-}
 
 router.post('/', (req, res) => {
   const body = getBody(req.body);

@@ -50,6 +50,12 @@ export class ListingsComponent {
     this.updateIndex();
   }
 
+  getPublicationTimeInDays(listing: CommonListing) {
+    if (!listing.lastPublicationDate) return;
+    const timeDifference = Date.now() - listing.lastPublicationDate.getTime();
+    return Math.round(timeDifference / (24 * 60 * 60 * 1000));
+  }
+
   private updateIndex() {
     const vis = this.visible;
     if (this._index < 0) {

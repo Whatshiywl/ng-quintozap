@@ -25,6 +25,7 @@
     <mat-chip disableRipple [selected]="false">${{listing.totalCost}}</mat-chip>
     <mat-chip disableRipple>{{listing.area}} m²</mat-chip>
     <mat-chip disableRipple>{{listing.rooms}} rooms</mat-chip>
+    <mat-chip *ngIf="listing.lastPublicationDate" disableRipple>{{getPublicationTimeInDays()}} days</mat-chip>
   </mat-chip-list>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

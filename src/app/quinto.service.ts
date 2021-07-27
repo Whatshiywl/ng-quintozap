@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { first, map, takeWhile } from "rxjs/operators";
 import { Filter } from "./app.component";
 import { CommonListing, ListingOrigin, ListingResult } from "./info/info.component";
+import { StorageService } from "./storage.service";
 
 export interface QuintoHitMetadata {
   activeSpecialConditions: any,
@@ -69,7 +70,10 @@ export class QuintoService {
   readonly listings$: Subject<ListingResult> = new Subject<ListingResult>();
   private origin: ListingOrigin = 'quinto'
 
-  constructor(private client: HttpClient) { }
+  constructor(
+    private client: HttpClient,
+    private storageService: StorageService
+  ) { }
 
   filter(quintoFilter: Filter) {
     const obs = this.getListings(quintoFilter);
@@ -102,6 +106,17 @@ export class QuintoService {
     );
   }
 
+  getListing(id: string) {
+    const path = `${this.quintoApi}/${id}`;
+    return this.client.get<{
+      firstPublicationDate: string,
+      lastPublicationDate: string
+    }>(path)
+    .pipe(
+      first()
+    );
+  }
+
   private getFromApi(quintoFilter: Filter) {
     const path = `${this.quintoApi}`;
     return this.client.post<QuintoResult>(path, this.getBody(quintoFilter))
@@ -131,6 +146,7 @@ export class QuintoService {
     const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
     const savedFavJson = localStorage.getItem('favorites');
     const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
+    const lastPublicationDates = this.storageService.getLastPublicationDates();
     return results.map(result => {
       const id = `${this.origin}-${result._id}`;
       const areaPerThousand = Math.round(result._source.area * 1000 / result._source.totalCost);
@@ -143,6 +159,7 @@ export class QuintoService {
         class: 'quinto-listing',
         origin: this.origin,
         id,
+        originalId: result._id,
         title: result._source.address,
         totalCost: result._source.totalCost,
         area: result._source.area,
@@ -156,7 +173,8 @@ export class QuintoService {
           lng: result._source.location.lon
         },
         seen: savedSeen.includes(id),
-        favorite: savedFav.includes(id)
+        favorite: savedFav.includes(id),
+        lastPublicationDate: lastPublicationDates[id] ? new Date(lastPublicationDates[id]) : undefined
       };
       return mapped;
     });

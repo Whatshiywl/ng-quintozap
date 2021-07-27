@@ -19,6 +19,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { QuintoService } from './quinto.service';
 import { InfoComponent } from './info/info.component';
 import { SwiperModule } from 'swiper/angular';
+import { StorageService } from './storage.service';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { SwiperModule } from 'swiper/angular';
   ],
   providers: [
     ZapService,
-    QuintoService
+    QuintoService,
+    StorageService
   ],
   bootstrap: [AppComponent]
 })

@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { first, map, takeWhile } from "rxjs/operators";
 import { Filter } from "./app.component";
 import { CommonListing, ListingOrigin, ListingResult } from "./info/info.component";
+import { StorageService } from "./storage.service";
 
 export interface ZapAddress {
   city: string,
@@ -49,7 +50,7 @@ export interface ZapListingMetadata {
   buildings: number,
   capacityLimit: any[],
   constructionStatus: string,
-  createdAt: Date,
+  createdAt: string,
   description: string,
   displayAddressType: string,
   externalId: string,
@@ -84,7 +85,7 @@ export interface ZapListingMetadata {
   unitFloor: number,
   unitTypes: string[],
   unitsOnTheFloor: number,
-  updatedAt: Date,
+  updatedAt: string,
   usableAreas: string[],
   usageTypes: string[],
   whatsappNumber: string,
@@ -115,7 +116,10 @@ export class ZapService {
   readonly listings$: Subject<ListingResult> = new Subject<ListingResult>();
   private origin: ListingOrigin = 'zap';
 
-  constructor(private client: HttpClient) { }
+  constructor(
+    private client: HttpClient,
+    private storageService: StorageService
+  ) { }
 
   filter(zapFilter: Filter) {
     const obs = this.getListings(zapFilter);
@@ -214,6 +218,7 @@ export class ZapService {
         class: 'zap-listing',
         origin: this.origin,
         id,
+        originalId: result.listing.id,
         title: result.listing.title,
         totalCost,
         area,
@@ -227,7 +232,9 @@ export class ZapService {
           lng: result.listing.address.point.lon
         },
         seen: savedSeen.includes(id),
-        favorite: savedFav.includes(id)
+        favorite: savedFav.includes(id),
+        firstPublicationDate: new Date(result.listing.createdAt),
+        lastPublicationDate: new Date(result.listing.updatedAt)
       };
       return mapped;
     });

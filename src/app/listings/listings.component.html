@@ -12,17 +12,24 @@
   <div [style.visibility]="(hideSeen && listing.seen && !listing.favorite) ? 'hidden' : 'visible'"
   matBadge="&#8288;" matBadgeSize="small" [matBadgeHidden]="listing.seen" matBadgeColor="warn"
   class="listing unselectable" [ngClass]="listing.class + (listing.favorite ? ' favorite' : '')" (click)="onListingClicked(listing)">
-    <div class="counters">
-      <div class="counter-element">
+    <div class="section">
+      <div class="section-element">
         {{listing.area}}
       </div>
-      <div class="counter-element">
+      <div class="section-element">
         {{listing.areaPerThousand}}
       </div>
-      <div class="counter-element">
+      <div class="section-element">
         {{listing.rooms}}
       </div>
     </div>
-    <span class="price">{{listing.totalCost}}</span>
+    <div class="section">
+      <div class="section-element">
+        {{listing.totalCost}}
+      </div>
+      <div *ngIf="listing.lastPublicationDate" class="section-element">
+        {{getPublicationTimeInDays(listing)}}d
+      </div>
+    </div>
   </div>
 </div>

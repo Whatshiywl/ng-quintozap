@@ -80,7 +80,8 @@ export class MapComponent implements OnChanges {
       this.listings.forEach(listing => {
         const position = listing.mapPosition;
         const { lat, lng } = position;
-        const hash = `${lat}|${lng}`;
+        const resolution = 3;
+        const hash = `${lat.toFixed(resolution)}|${lng.toFixed(resolution)}`;
         if (!this.positions[hash]) this.positions[hash] = {
           position,
           listings: [ ]

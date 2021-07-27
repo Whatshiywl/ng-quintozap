@@ -1,6 +1,4 @@
 import { Component } from "@angular/core";
-import { QuintoHit } from "../quinto.service";
-import { ZapListing } from "../zap.service";
 import { Clipboard } from "@angular/cdk/clipboard";
 
 import SwiperCore, {
@@ -9,6 +7,8 @@ import SwiperCore, {
 } from 'swiper/core';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Filter } from "../app.component";
+import { QuintoService } from "../quinto.service";
+import { StorageService } from "../storage.service";
 
 export type ListingOrigin = 'zap' | 'quinto';
 
@@ -16,6 +16,7 @@ export interface CommonListing {
   class: 'zap-listing' | 'quinto-listing',
   origin: ListingOrigin,
   id: string,
+  originalId: string,
   title: string,
   totalCost: number
   area: number,
@@ -26,7 +27,9 @@ export interface CommonListing {
   rooms: number,
   mapPosition: google.maps.LatLngLiteral,
   seen: boolean,
-  favorite: boolean
+  favorite: boolean,
+  firstPublicationDate?: Date,
+  lastPublicationDate?: Date
 }
 
 export interface ListingResult {
@@ -50,18 +53,10 @@ export class InfoComponent {
 
   constructor(
     private clipboard: Clipboard,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private quintoService: QuintoService,
+    private storageService: StorageService
   ) { }
-
-  setZapListing(listing: CommonListing) {
-    this.linkButton = 'Zap Imóveis';
-    this.listing = listing;
-  }
-
-  setQuintoHit(listing: CommonListing) {
-    this.linkButton = 'Quinto Andar';
-    this.listing = listing;
-  }
 
   setListing(listing: CommonListing) {
     switch (listing.class) {
@@ -70,9 +65,24 @@ export class InfoComponent {
         break;
       case 'quinto-listing':
         this.linkButton = 'Quinto Andar';
+        if (!listing.lastPublicationDate) {
+          this.quintoService.getListing(listing.originalId).subscribe(result => {
+            if (result.firstPublicationDate) listing.firstPublicationDate = new Date(result.firstPublicationDate);
+            if (result.lastPublicationDate) {
+              listing.lastPublicationDate = new Date(result.lastPublicationDate);
+              this.storageService.setLastPublicationDate(listing.id, result.lastPublicationDate);
+            }
+          });
+        }
         break;
     }
     this.listing = listing;
+  }
+
+  getPublicationTimeInDays() {
+    if (!this.listing.lastPublicationDate) return;
+    const timeDifference = Date.now() - this.listing.lastPublicationDate.getTime();
+    return Math.round(timeDifference / (24 * 60 * 60 * 1000));
   }
 
   openLink() {
