@@ -4,7 +4,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 
 export type UserCredential = firebase.auth.UserCredential;
-export type User = firebase.User;
+export type FirebaseUser = firebase.User;
 
 @Injectable()
 export class AuthService {
@@ -32,7 +32,6 @@ export class AuthService {
   }
 
   signInWithGooglePopup() {
-    console.log(this);
     return this.auth.signInWithPopup(this.googleProvider);
   }
 

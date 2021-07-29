@@ -5,8 +5,8 @@
   </button>
   <button mat-icon-button
   (click)="onToggleVisibility()">
-    <mat-icon *ngIf="listing.seen">visibility_outline</mat-icon>
-    <mat-icon *ngIf="!listing.seen">visibility_off_outline</mat-icon>
+    <mat-icon *ngIf="isSeen(listing); else notSeen">visibility_outline</mat-icon>
+    <ng-template #notSeen><mat-icon>visibility_off_outline</mat-icon></ng-template>
   </button>
 </h2>
 <mat-dialog-content class="mat-typography">
@@ -36,7 +36,7 @@
   </button>
   <button mat-button cdkFocusInitial
   (click)="onFavorite()">
-    <mat-icon *ngIf="!listing.favorite">favorite_border</mat-icon>
-    <mat-icon *ngIf="listing.favorite" color="warn">favorite</mat-icon>
+    <mat-icon *ngIf="isFavorite(listing); else notFav" color="warn">favorite</mat-icon>
+    <ng-template #notFav><mat-icon>favorite_border</mat-icon></ng-template>
   </button>
 </mat-dialog-actions>

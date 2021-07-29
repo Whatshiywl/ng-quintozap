@@ -142,10 +142,6 @@ export class QuintoService {
   }
 
   private toCommonListings(results: QuintoHit[]) {
-    const savedSeenJson = localStorage.getItem('seen');
-    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
-    const savedFavJson = localStorage.getItem('favorites');
-    const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
     const lastPublicationDates = this.storageService.getLastPublicationDates();
     return results.map(result => {
       const id = `${this.origin}-${result._id}`;
@@ -172,8 +168,6 @@ export class QuintoService {
           lat: result._source.location.lat,
           lng: result._source.location.lon
         },
-        seen: savedSeen.includes(id),
-        favorite: savedFav.includes(id),
         lastPublicationDate: lastPublicationDates[id] ? new Date(lastPublicationDates[id]) : undefined
       };
       return mapped;

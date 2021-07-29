@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { CommonListing } from "../info/info.component";
+import { PreferencesService } from "../preferences.service";
 
 export interface ListingOptions {
   width: number,
@@ -18,10 +19,39 @@ export class ListingsComponent {
   @Output() listingClicked: EventEmitter<CommonListing> = new EventEmitter<CommonListing>();
   private _index = 0;
 
-  get visible() {
-    return this.listings.filter(listing => {
-      return !this.hideSeen || !listing.seen || listing.favorite;
+  seen: string[] = [];
+  favorites: string[] = [];
+
+  constructor(
+    private preferences: PreferencesService
+  ) {
+    const savedPref = this.preferences.getPreferences();
+    this.seen = savedPref.seen;
+    this.favorites = savedPref.favorites;
+    this.preferences.valueChanges.subscribe(pref => {
+      if (!pref) return;
+      if (pref.seen) this.seen = pref.seen;
+      if (pref.favorites) this.favorites = pref.favorites;
     });
+  }
+
+  get visible() {
+    return this.listings.filter(listing => this.isVisible(listing));
+  }
+
+  isSeen(listing: CommonListing) {
+    return this.seen.includes(listing.id);
+  }
+
+  isFavorite(listing: CommonListing) {
+    return this.favorites.includes(listing.id);
+  }
+
+  isVisible(listing: CommonListing) {
+    if (!this.hideSeen) return true;
+    if (!this.seen.includes(listing.id)) return true;
+    if (this.favorites.includes(listing.id)) return true;
+    return false;
   }
 
   get index() {
@@ -44,14 +74,17 @@ export class ListingsComponent {
 
   onListingClicked(listing: CommonListing) {
     this.listingClicked.next(listing);
-    if (listing.seen) return;
-    listing.seen = true;
-    const savedSeenJson = localStorage.getItem('seen');
-    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
-    if (savedSeen.includes(listing.id)) return;
-    savedSeen.push(listing.id);
-    const toSave = JSON.stringify(savedSeen);
-    localStorage.setItem('seen', toSave);
+    if (this.seen.includes(listing.id)) return;
+    // if (listing.seen) return;
+    // listing.seen = true;
+    // const savedSeenJson = localStorage.getItem('seen');
+    // const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    // if (savedSeen.includes(listing.id)) return;
+    // savedSeen.push(listing.id);
+    // const toSave = JSON.stringify(savedSeen);
+    // localStorage.setItem('seen', toSave);
+    this.seen.push(listing.id);
+    this.preferences.save('seen', this.seen);
     this.updateIndex();
   }
 

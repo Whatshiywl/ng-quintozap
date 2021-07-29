@@ -5,6 +5,7 @@ import { map, catchError, debounceTime, tap } from "rxjs/operators";
 import { GoogleMap } from "@angular/google-maps";
 import { CommonListing } from "../info/info.component";
 import { ListingOptions } from "../listings/listings.component";
+import { PreferencesService } from "../preferences.service";
 
 @Component({
   selector: 'app-map',
@@ -20,11 +21,9 @@ export class MapComponent implements OnChanges {
   @ViewChild('mapWrapper') mapWrapper!: ElementRef;
 
   apiLoaded!: Observable<boolean>;
-  options: google.maps.MapOptions = {
-    center: { lat: -22.947852563718513, lng: -43.30149955088697 },
-    mapTypeId: 'roadmap',
-    zoom: 12
-  };
+  options!: google.maps.MapOptions;
+  optionsFromStore = false;
+  firstOptionsFromStore = true;
 
   boundsChangedSubject: Subject<void> = new Subject<void>();
 
@@ -43,7 +42,8 @@ export class MapComponent implements OnChanges {
   };
 
   constructor(
-    httpClient: HttpClient
+    httpClient: HttpClient,
+    private preferences: PreferencesService
   ) {
     const mapsKeyApi = `api/googlemapsapikey`;
     httpClient.get(`${mapsKeyApi}`, { responseType: 'text' }).subscribe(key => {
@@ -69,11 +69,14 @@ export class MapComponent implements OnChanges {
       this.onMapLoaded();
     }, 100);
 
-    const savedMapOptionsJson = localStorage.getItem('mapOptions');
-    if (savedMapOptionsJson && savedMapOptionsJson !== 'undefined') {
-      const savedMapOptions = JSON.parse(savedMapOptionsJson);
-      this.options = savedMapOptions;
-    }
+    this.preferences.valueChanges.subscribe(pref => {
+      if (!pref.mapOptions) return;
+      if (this.isSameMapOptions(pref.mapOptions)) {
+        return;
+      }
+      this.optionsFromStore = true;
+      this.options = pref.mapOptions;
+    });
   }
 
   onMapLoaded() {
@@ -103,8 +106,10 @@ export class MapComponent implements OnChanges {
 
   onBoundsChanged() {
     const map = this.gMap.googleMap;
-    this.boundsChanged.emit(map);
-    this.updateMapOptions();
+    const options = this.updateMapOptions();
+    if (options) {
+      this.boundsChanged.emit(map);
+    }
   }
 
   updateMapOptions() {
@@ -116,8 +121,15 @@ export class MapComponent implements OnChanges {
     const options: google.maps.MapOptions = {
       center, zoom, mapTypeId
     };
-    const toSave = JSON.stringify(options);
-    localStorage.setItem('mapOptions', toSave);
+    if (this.optionsFromStore || !this.isSameMapOptions(options)) {
+      if (!this.optionsFromStore || this.firstOptionsFromStore) {
+        this.preferences.save('mapOptions', options);
+        this.firstOptionsFromStore = false;
+      }
+      this.optionsFromStore = false;
+      return options;
+    }
+    return;
   }
 
   get center() {
@@ -142,5 +154,14 @@ export class MapComponent implements OnChanges {
     const mapHeight = mapBounds.south - mapBounds.north;
     const top = (position.lat - mapBounds.north) * height / mapHeight;
     return top - (0.5 * this.listingOptions.height);
+  }
+
+  private isSameMapOptions(options: google.maps.MapOptions) {
+    if (this.options === options) return true;
+    if (this.options?.zoom !== options?.zoom) return false;
+    if (this.options?.mapTypeId !== options?.mapTypeId) return false;
+    if (this.options?.center?.lat !== options?.center?.lat) return false;
+    if (this.options?.center?.lng !== options?.center?.lng) return false;
+    return true;
   }
 }

@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { merge, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { PreferencesService } from './preferences.service';
 import { CommonListing, InfoComponent, ListingResult } from './info/info.component';
 import { QuintoService } from './quinto.service';
 import { ZapService } from './zap.service';
@@ -43,34 +44,28 @@ export class AppComponent {
     fb: FormBuilder,
     private zapService: ZapService,
     private quintoService: QuintoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private preferences: PreferencesService
   ) {
     this.filterForm = fb.group({
       minPrice: fb.control(undefined),
       maxPrice: fb.control(undefined),
     });
 
-    const savedFilterJson = localStorage.getItem('filters');
-    if (savedFilterJson) {
-      const savedFilter = JSON.parse(savedFilterJson);
-      this.filterForm.setValue(savedFilter);
-    }
+    this.preferences.valueChanges.subscribe(pref => {
+      this.hideSeen = pref.hideSeen;
+      this.filterForm.setValue(pref.filters, { emitEvent: false });
+      this.autoSearch.setValue(pref.autoSearch, { emitEvent: false });
+    });
 
     this.filterForm.valueChanges.subscribe(value => {
-      const toSave = JSON.stringify(value);
-      localStorage.setItem('filters', toSave);
+      this.preferences.save('filters', value);
     });
 
     this.autoSearch = fb.control(true);
 
-    const savedAutoSearchString = localStorage.getItem('autoSearch');
-    if (savedAutoSearchString) {
-      const savedAutoSearch = savedAutoSearchString === 'true';
-      this.autoSearch.setValue(savedAutoSearch);
-    }
-
     this.autoSearch.valueChanges.subscribe(enabled => {
-      localStorage.setItem('autoSearch', enabled);
+      this.preferences.save('autoSearch', enabled);
       if (enabled) this.filter();
     });
 
@@ -93,9 +88,6 @@ export class AppComponent {
         }, 1000);
       }
     });
-
-    const savedHideSeen = localStorage.getItem('hideSeen') || 'false';
-    this.hideSeen = JSON.parse(savedHideSeen);
   }
 
   onBoundsChanged(map: google.maps.Map<Element>) {
@@ -106,6 +98,7 @@ export class AppComponent {
   }
 
   filter() {
+    if (!this.mapParams) return;
     const currentFilter: Filter = {
       mapParams: this.mapParams,
       ...this.filterForm.value
@@ -134,7 +127,6 @@ export class AppComponent {
 
   onToggleHideSeen() {
     this.hideSeen = !this.hideSeen;
-    const toSave = JSON.stringify(this.hideSeen);
-    localStorage.setItem('hideSeen', toSave);
+    this.preferences.save('hideSeen', this.hideSeen);
   }
 }

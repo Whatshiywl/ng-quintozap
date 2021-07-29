@@ -197,10 +197,6 @@ export class ZapService {
   }
 
   private toCommonListings(results: ZapListing[]) {
-    const savedSeenJson = localStorage.getItem('seen');
-    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
-    const savedFavJson = localStorage.getItem('favorites');
-    const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
     return results.map(result => {
       const id = `${this.origin}-${result.listing.id}`;
       const area = +result.listing.usableAreas[0];
@@ -231,8 +227,6 @@ export class ZapService {
           lat: result.listing.address.point.lat,
           lng: result.listing.address.point.lon
         },
-        seen: savedSeen.includes(id),
-        favorite: savedFav.includes(id),
         firstPublicationDate: new Date(result.listing.createdAt),
         lastPublicationDate: new Date(result.listing.updatedAt)
       };

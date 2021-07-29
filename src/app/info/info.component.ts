@@ -9,6 +9,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Filter } from "../app.component";
 import { QuintoService } from "../quinto.service";
 import { StorageService } from "../storage.service";
+import { PreferencesService } from "../preferences.service";
 
 export type ListingOrigin = 'zap' | 'quinto';
 
@@ -26,8 +27,8 @@ export interface CommonListing {
   pictureCaptions: string[],
   rooms: number,
   mapPosition: google.maps.LatLngLiteral,
-  seen: boolean,
-  favorite: boolean,
+  // seen: boolean,
+  // favorite: boolean,
   firstPublicationDate?: Date,
   lastPublicationDate?: Date
 }
@@ -51,12 +52,25 @@ export class InfoComponent {
 
   listing!: CommonListing;
 
+  seen: string[] = [ ];
+  favorites: string[] = [ ];
+
   constructor(
     private clipboard: Clipboard,
     private snack: MatSnackBar,
     private quintoService: QuintoService,
-    private storageService: StorageService
-  ) { }
+    private storageService: StorageService,
+    private preferences: PreferencesService
+  ) {
+    const savedPref = this.preferences.getPreferences();
+    this.seen = savedPref.seen;
+    this.favorites = savedPref.favorites;
+    this.preferences.valueChanges.subscribe(pref => {
+      if (!pref) return;
+      if (pref.seen) this.seen = pref.seen;
+      if (pref.favorites) this.favorites = pref.favorites;
+    });
+  }
 
   setListing(listing: CommonListing) {
     switch (listing.class) {
@@ -103,33 +117,57 @@ export class InfoComponent {
 
   onFavorite() {
     if (!this.listing) return;
-    const newState = !this.listing.favorite;
-    this.listing.favorite = newState;
-    const savedFavJson = localStorage.getItem('favorites');
-    const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
+    // const newState = !this.listing.favorite;
+    // this.listing.favorite = newState;
+    // const savedFavJson = localStorage.getItem('favorites');
+    // const savedFav = savedFavJson ? JSON.parse(savedFavJson) as string[] : [ ];
+    // if (newState) {
+    //   if (!savedFav.includes(this.listing.id)) savedFav.push(this.listing.id);
+    // } else {
+    //   const index = savedFav.findIndex(id => id === this.listing.id);
+    //   savedFav.splice(index, 1);
+    // }
+    // const toSave = JSON.stringify(savedFav);
+    // localStorage.setItem('favorites', toSave);
+    const newState = !this.favorites.includes(this.listing.id);
     if (newState) {
-      if (!savedFav.includes(this.listing.id)) savedFav.push(this.listing.id);
+      this.favorites.push(this.listing.id);
     } else {
-      const index = savedFav.findIndex(id => id === this.listing.id);
-      savedFav.splice(index, 1);
+      const index = this.favorites.findIndex(id => id === this.listing.id);
+      this.favorites.splice(index, 1);
     }
-    const toSave = JSON.stringify(savedFav);
-    localStorage.setItem('favorites', toSave);
+    this.preferences.save('favorites', this.favorites);
   }
 
   onToggleVisibility() {
     if (!this.listing) return;
-    const newState = !this.listing.seen;
-    this.listing.seen = newState;
-    const savedSeenJson = localStorage.getItem('seen');
-    const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    // const newState = !this.listing.seen;
+    // this.listing.seen = newState;
+    // const savedSeenJson = localStorage.getItem('seen');
+    // const savedSeen = savedSeenJson ? JSON.parse(savedSeenJson) as string[] : [ ];
+    // if (newState) {
+    //   if (!savedSeen.includes(this.listing.id)) savedSeen.push(this.listing.id);
+    // } else {
+    //   const index = savedSeen.findIndex(id => id === this.listing.id);
+    //   savedSeen.splice(index, 1);
+    // }
+    // const toSave = JSON.stringify(savedSeen);
+    // localStorage.setItem('seen', toSave);
+    const newState = !this.seen.includes(this.listing.id);
     if (newState) {
-      if (!savedSeen.includes(this.listing.id)) savedSeen.push(this.listing.id);
+      this.seen.push(this.listing.id);
     } else {
-      const index = savedSeen.findIndex(id => id === this.listing.id);
-      savedSeen.splice(index, 1);
+      const index = this.seen.findIndex(id => id === this.listing.id);
+      this.seen.splice(index, 1);
     }
-    const toSave = JSON.stringify(savedSeen);
-    localStorage.setItem('seen', toSave);
+    this.preferences.save('seen', this.seen);
+  }
+
+  isSeen(listing: CommonListing) {
+    return this.seen.includes(listing.id);
+  }
+
+  isFavorite(listing: CommonListing) {
+    return this.favorites.includes(listing.id);
   }
 }

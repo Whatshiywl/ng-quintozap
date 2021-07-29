@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { AuthService, User, UserCredential } from './auth.service';
+import { AuthService, FirebaseUser, UserCredential } from './auth.service';
 
 @Component({
   selector: 'homaxi-auth',
@@ -8,7 +8,7 @@ import { AuthService, User, UserCredential } from './auth.service';
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent implements OnInit {
-  user!: User | null;
+  user!: FirebaseUser | null;
 
   credentialForm: FormGroup;
 

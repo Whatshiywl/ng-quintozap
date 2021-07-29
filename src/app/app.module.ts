@@ -22,6 +22,7 @@ import { InfoComponent } from './info/info.component';
 import { SwiperModule } from 'swiper/angular';
 import { StorageService } from './storage.service';
 import { AuthModule } from './auth/auth.module';
+import { PreferencesService } from './preferences.service';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { AuthModule } from './auth/auth.module';
   providers: [
     ZapService,
     QuintoService,
-    StorageService
+    StorageService,
+    PreferencesService
   ],
   bootstrap: [AppComponent]
 })

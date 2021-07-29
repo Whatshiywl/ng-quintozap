@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "bubaxi": {
+      "hosting": {
+        "ng-quintozap": [
+          "bubaxi"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "bubaxi"
+  }
+}
