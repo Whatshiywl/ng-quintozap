@@ -128,7 +128,7 @@ export class QuintoService {
   }
 
   private getBody(filter: Filter) {
-    const { minPrice, maxPrice, maxArea, minArea, size, page } = filter;
+    const { minPrice, maxPrice, maxArea, minArea, rooms, size, page } = filter;
     const from = size && page ? (page - 1) * size : 0;
     const body = {
       ...(filter.mapParams || { }),
@@ -136,6 +136,7 @@ export class QuintoService {
       maxPrice,
       maxArea,
       minArea,
+      rooms,
       size,
       page,
       from

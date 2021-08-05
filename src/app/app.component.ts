@@ -17,6 +17,7 @@ export interface Filter {
   maxPrice: number,
   minArea: number,
   maxArea: number,
+  rooms: number,
   size?: number,
   page?: number
 }
@@ -54,6 +55,7 @@ export class AppComponent {
       maxPrice: fb.control(undefined),
       minArea: fb.control(undefined),
       maxArea: fb.control(undefined),
+      rooms: fb.control(undefined)
     });
 
     this.preferences.valueChanges.subscribe(pref => {

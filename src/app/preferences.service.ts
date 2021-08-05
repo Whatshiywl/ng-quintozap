@@ -94,7 +94,8 @@ export class PreferencesService {
         minPrice: 0,
         maxPrice: 100000,
         maxArea: 0,
-        minArea: 10000
+        minArea: 10000,
+        rooms: 0
       },
       seen: seen ? JSON.parse(seen) : [ ],
       favorites: favorites ? JSON.parse(favorites) : [ ]

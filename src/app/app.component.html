@@ -16,23 +16,29 @@
           <button mat-raised-button color="primary" class="apply-filter-button" (click)="drawer.toggle() && filter()">Filter</button>
           <div class="form-lines">
             <div class="form-line">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" class="half-width">
                 <mat-label>Min Price</mat-label>
                 <input matInput placeholder="0" step="100" formControlName="minPrice" type="number">
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" class="half-width">
                 <mat-label>Max Price</mat-label>
                 <input matInput placeholder="10000" step="100" formControlName="maxPrice" type="number">
               </mat-form-field>
             </div>
             <div class="form-line">
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" class="half-width">
                 <mat-label>Min Area</mat-label>
                 <input matInput placeholder="20" step="5" formControlName="minArea" type="number">
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" class="half-width">
                 <mat-label>Max Area</mat-label>
                 <input matInput placeholder="2000" step="5" formControlName="maxArea" type="number">
+              </mat-form-field>
+            </div>
+            <div class="form-line">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Bedrooms</mat-label>
+                <input matInput placeholder="3" step="1" formControlName="rooms" type="number">
               </mat-form-field>
             </div>
           </div>

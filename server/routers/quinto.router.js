@@ -63,6 +63,7 @@ function getBody(filter) {
     center, bounds,
     minPrice, maxPrice,
     minArea, maxArea,
+    rooms,
     size, from, page
   } = filter;
   const body = {
@@ -84,7 +85,7 @@ function getBody(filter) {
         "max_area": +maxArea || 2000,
         "min_area": +minArea || 0
       },
-      // "min_bedrooms": 1,
+      "min_bedrooms": +rooms || 0,
       "availability": "any",
       "occupancy": "any",
       "sorting": {

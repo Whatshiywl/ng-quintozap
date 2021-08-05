@@ -24,6 +24,7 @@ function getParams(filter) {
     viewport,
     minPrice, maxPrice,
     maxArea, minArea,
+    rooms,
     size, from, page
   } = filter;
   const fields = getIncludeFields();
@@ -52,6 +53,7 @@ function getParams(filter) {
   if (maxPrice) params['priceMax'] = maxPrice;
   if (minArea) params['usableAreasMin'] = minArea;
   if (maxArea) params['usableAreasMax'] = maxArea;
+  if (rooms) params['bedrooms'] = rooms;
   return params;
 }
 

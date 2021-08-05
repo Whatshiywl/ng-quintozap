@@ -178,11 +178,12 @@ export class ZapService {
       const viewport = `${east},${north}|${west},${south}`;
       params = params.append('viewport', viewport);
     }
-    const { minPrice, maxPrice, maxArea, minArea, size, page } = filter;
+    const { minPrice, maxPrice, maxArea, minArea, rooms, size, page } = filter;
     if (minPrice) params = params.append('minPrice', `${minPrice}`);
     if (maxPrice) params = params.append('maxPrice', `${maxPrice}`);
     if (minArea) params = params.append('minArea', `${minArea}`);
     if (maxArea) params = params.append('maxArea', `${maxArea}`);
+    if (rooms) params = params.append('rooms', `${rooms}`);
     if (size) params = params.append('size', size);
     if (page) {
       params = params.append('page', page);
