@@ -11,23 +11,33 @@
     <mat-drawer class="drawer"
     #drawer mode="over" position="end">
       <homaxi-auth></homaxi-auth>
-      <div class="form-wrapper">
+      <mat-card class="form-wrapper">
         <form class="filter-form" [formGroup]="filterForm">
           <button mat-raised-button color="primary" class="apply-filter-button" (click)="drawer.toggle() && filter()">Filter</button>
-          <div class="price-form">
-            <div class="price-form-inputs">
+          <div class="form-lines">
+            <div class="form-line">
               <mat-form-field appearance="outline">
                 <mat-label>Min Price</mat-label>
-                <input matInput placeholder="0" formControlName="minPrice" type="number">
+                <input matInput placeholder="0" step="100" formControlName="minPrice" type="number">
               </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Max Price</mat-label>
-                <input matInput placeholder="10000" formControlName="maxPrice" type="number">
+                <input matInput placeholder="10000" step="100" formControlName="maxPrice" type="number">
+              </mat-form-field>
+            </div>
+            <div class="form-line">
+              <mat-form-field appearance="outline">
+                <mat-label>Min Area</mat-label>
+                <input matInput placeholder="20" step="5" formControlName="minArea" type="number">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Max Area</mat-label>
+                <input matInput placeholder="2000" step="5" formControlName="maxArea" type="number">
               </mat-form-field>
             </div>
           </div>
         </form>
-      </div>
+      </mat-card>
     </mat-drawer>
     <mat-drawer-content>
       <app-map

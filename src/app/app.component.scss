@@ -43,7 +43,7 @@ $medium: 1200px;
       }
 
       .form-wrapper {
-        height: 100%;
+        margin-top: 10px;
         padding: 5px;
         box-sizing: border-box;
 
@@ -54,13 +54,14 @@ $medium: 1200px;
 
           .apply-filter-button {
             height: 30px;
+            margin-bottom: 20px;
           }
 
-          .price-form {
+          .form-lines {
             display: flex;
             flex-direction: column;
 
-            .price-form-inputs {
+            .form-line {
               display: flex;
               justify-content: space-around;
 

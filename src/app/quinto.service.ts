@@ -84,7 +84,7 @@ export class QuintoService {
 
   getListings(quintoFilter: Filter) {
     const tempFilter = { ...quintoFilter };
-    tempFilter.size = tempFilter.size || 300;
+    tempFilter.size = tempFilter.size || 100;
     return this.getFromApi(quintoFilter)
     .pipe(
       takeWhile(results => {
@@ -128,12 +128,14 @@ export class QuintoService {
   }
 
   private getBody(filter: Filter) {
-    const { minPrice, maxPrice, size, page } = filter;
+    const { minPrice, maxPrice, maxArea, minArea, size, page } = filter;
     const from = size && page ? (page - 1) * size : 0;
     const body = {
       ...(filter.mapParams || { }),
       minPrice,
       maxPrice,
+      maxArea,
+      minArea,
       size,
       page,
       from

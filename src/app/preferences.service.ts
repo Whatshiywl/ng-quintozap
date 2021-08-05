@@ -92,7 +92,9 @@ export class PreferencesService {
       },
       filters: filters ? JSON.parse(filters) : {
         minPrice: 0,
-        maxPrice: 100000
+        maxPrice: 100000,
+        maxArea: 0,
+        minArea: 10000
       },
       seen: seen ? JSON.parse(seen) : [ ],
       favorites: favorites ? JSON.parse(favorites) : [ ]

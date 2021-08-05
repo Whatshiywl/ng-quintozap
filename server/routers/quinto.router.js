@@ -62,6 +62,7 @@ function getBody(filter) {
   const {
     center, bounds,
     minPrice, maxPrice,
+    minArea, maxArea,
     size, from, page
   } = filter;
   const body = {
@@ -80,8 +81,8 @@ function getBody(filter) {
         "min_value": +minPrice || 200
       },
       "area": {
-        "max_area": 2000,
-        "min_area": 20
+        "max_area": +maxArea || 2000,
+        "min_area": +minArea || 0
       },
       // "min_bedrooms": 1,
       "availability": "any",
@@ -90,7 +91,7 @@ function getBody(filter) {
         "criteria": "relevance_rent",
         "order": "desc"
       },
-      "page_size": +size || 300,
+      "page_size": +size || 100,
       "offset": +from || 0,
       // "search_dropdown_value": "Barra da Tijuca, Rio de Janeiro - RJ, Brasil"
     },

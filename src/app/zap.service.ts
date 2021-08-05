@@ -130,7 +130,7 @@ export class ZapService {
 
   getListings(zapFilter: Filter) {
     const tempFilter = { ...zapFilter };
-    tempFilter.size = tempFilter.size || 300;
+    tempFilter.size = tempFilter.size || 100;
     return this.getFromApi(zapFilter)
     .pipe(
       takeWhile(results => {
@@ -178,9 +178,11 @@ export class ZapService {
       const viewport = `${east},${north}|${west},${south}`;
       params = params.append('viewport', viewport);
     }
-    const { minPrice, maxPrice, size, page } = filter;
+    const { minPrice, maxPrice, maxArea, minArea, size, page } = filter;
     if (minPrice) params = params.append('minPrice', `${minPrice}`);
     if (maxPrice) params = params.append('maxPrice', `${maxPrice}`);
+    if (minArea) params = params.append('minArea', `${minArea}`);
+    if (maxArea) params = params.append('maxArea', `${maxArea}`);
     if (size) params = params.append('size', size);
     if (page) {
       params = params.append('page', page);

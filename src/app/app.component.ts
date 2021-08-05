@@ -15,6 +15,8 @@ export interface Filter {
   },
   minPrice: number,
   maxPrice: number,
+  minArea: number,
+  maxArea: number,
   size?: number,
   page?: number
 }
@@ -50,6 +52,8 @@ export class AppComponent {
     this.filterForm = fb.group({
       minPrice: fb.control(undefined),
       maxPrice: fb.control(undefined),
+      minArea: fb.control(undefined),
+      maxArea: fb.control(undefined),
     });
 
     this.preferences.valueChanges.subscribe(pref => {

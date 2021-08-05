@@ -11,6 +11,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -46,6 +47,7 @@ import { PreferencesService } from './preferences.service';
     ClipboardModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatCardModule,
     AuthModule
   ],
   providers: [

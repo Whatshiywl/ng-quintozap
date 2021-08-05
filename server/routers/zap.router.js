@@ -23,6 +23,7 @@ function getParams(filter) {
   const {
     viewport,
     minPrice, maxPrice,
+    maxArea, minArea,
     size, from, page
   } = filter;
   const fields = getIncludeFields();
@@ -37,7 +38,7 @@ function getParams(filter) {
     business: 'RENTAL',
     listingType: 'USED',
     portal: 'ZAP',
-    size: size || '300',
+    size: size || '100',
     from: from || '0',
     page: page || '1',
     cityWiseStreet: '1',
@@ -49,6 +50,8 @@ function getParams(filter) {
   };
   if (minPrice) params['priceMin'] = minPrice;
   if (maxPrice) params['priceMax'] = maxPrice;
+  if (minArea) params['usableAreasMin'] = minArea;
+  if (maxArea) params['usableAreasMax'] = maxArea;
   return params;
 }
 
