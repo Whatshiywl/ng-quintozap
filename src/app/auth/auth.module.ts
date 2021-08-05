@@ -7,6 +7,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
+import { MatExpansionModule } from '@angular/material/expansion';
 import { BrowserModule } from "@angular/platform-browser";
 import { environment } from "../../environments/environment";
 import { AuthComponent } from "./auth.component";
@@ -25,6 +26,7 @@ import { AuthService } from "./auth.service";
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatExpansionModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule
   ],
